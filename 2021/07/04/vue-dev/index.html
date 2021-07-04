@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <!-- Minima -->
+  <!-- Hexo theme created by @adisaktijrs -->
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+
+  
+  <title>离职后才搞懂vue项目开发流程中的疑惑点</title>
+  
+  <link rel="canonical" href="http://example.com/2021/07/04/vue-dev/">
+  
+  <meta name="description" content="在离职的最后一个月，帮两位同事申请加薪，确切的说，申请加薪是导火索，我被扣上了哄抬同事工资以提高自己工资的帽子，在推动前后端分离工作中处处碰壁，点燃了压抑许久的离职冲动，领导培养自己四五年，不让声张，答应悄悄离开。 离开时原来公司项目里剩下很多问题没有解决，现在自己还在做vue和动画的项目，现在或许">
+  
+  
+  <meta name="author" content="nihaojob@163.com">
+  
+  <meta property="og:image" content="http://example.comundefined">
+  
+  <meta property="og:site_name" content="秦少卫的博客" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="离职后才搞懂vue项目开发流程中的疑惑点" />
+  
+  <meta property="og:description" content="在离职的最后一个月，帮两位同事申请加薪，确切的说，申请加薪是导火索，我被扣上了哄抬同事工资以提高自己工资的帽子，在推动前后端分离工作中处处碰壁，点燃了压抑许久的离职冲动，领导培养自己四五年，不让声张，答应悄悄离开。 离开时原来公司项目里剩下很多问题没有解决，现在自己还在做vue和动画的项目，现在或许">
+  
+  <meta property="og:url" content="http://example.com/2021/07/04/vue-dev/" />
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="离职后才搞懂vue项目开发流程中的疑惑点">
+  
+  <meta name="twitter:description" content="在离职的最后一个月，帮两位同事申请加薪，确切的说，申请加薪是导火索，我被扣上了哄抬同事工资以提高自己工资的帽子，在推动前后端分离工作中处处碰壁，点燃了压抑许久的离职冲动，领导培养自己四五年，不让声张，答应悄悄离开。 离开时原来公司项目里剩下很多问题没有解决，现在自己还在做vue和动画的项目，现在或许">
+  
+  
+  <meta name="twitter:image" content="http://example.comundefined">
+  
+  <meta name="twitter:url" content="http://example.com/2021/07/04/vue-dev/" />
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Preload fonts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="preload" href="../fonts/dm-serif-display-v4-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/inter-v2-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+<link rel="stylesheet" href="/css/normalize.css">
+
+  
+<link rel="stylesheet" href="/css/skeleton.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+<link rel="stylesheet" href="/css/prism-dark.css">
+
+  
+<link rel="stylesheet" href="/css/prism-line-numbers.css">
+
+  <!-- User css -->
+  
+  
+<link rel="stylesheet" href="/css/user.css">
+
+  
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+  <!-- Custom Theme Color Style
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <style>
+  a:not(.icon) {
+    text-decoration-color: #0FA0CE;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 50%,
+      #0FA0CE 50%
+    );
+  }
+  blockquote {
+    border-left: 8px solid #0FA0CE;
+  }
+  .nanobar .bar {
+    background: #0FA0CE;
+  }
+  .button.button-primary:hover,
+  button.button-primary:hover,
+  input[type="submit"].button-primary:hover,
+  input[type="reset"].button-primary:hover,
+  input[type="button"].button-primary:hover,
+  .button.button-primary:focus,
+  button.button-primary:focus,
+  input[type="submit"].button-primary:focus,
+  input[type="reset"].button-primary:focus,
+  input[type="button"].button-primary:focus {
+    background-color: #0FA0CE;
+    border-color: #0FA0CE;
+  }
+  input[type="email"]:focus,
+  input[type="number"]:focus,
+  input[type="search"]:focus,
+  input[type="text"]:focus,
+  input[type="tel"]:focus,
+  input[type="url"]:focus,
+  input[type="password"]:focus,
+  textarea:focus,
+  select:focus {
+    border: 1px solid #0FA0CE;
+  }
+</style>
+
+  <!-- Google Analytics (With Privacy Settings On)
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div>
+
+        <div class="row">
+  <div class="two columns" style="max-width: 50px">
+    <h1 class="mt-2 mode">
+      <div onclick=setDarkMode(true) id="darkBtn">🌑</div>
+      <div onclick=setDarkMode(false) id="lightBtn" class=hidden>☀️</div>
+      <script >
+        if (localStorage.getItem('preferredTheme') == 'dark') {
+          setDarkMode(true)
+        }
+        function setDarkMode(isDark) {
+          var darkBtn = document.getElementById('darkBtn')
+          var lightBtn = document.getElementById('lightBtn')
+          if (isDark) {
+            lightBtn.style.display = "block"
+            darkBtn.style.display = "none"
+            localStorage.setItem('preferredTheme', 'dark');
+          } else {
+            lightBtn.style.display = "none"
+            darkBtn.style.display = "block"
+            localStorage.removeItem('preferredTheme');
+          }
+          document.body.classList.toggle("darkmode");
+        }
+      </script>
+    </h1>
+  </div>
+
+  <div class="six columns ml-1">
+    <h1 class="mt-2">
+      秦少卫的博客
+    </h1>
+  </div>
+
+  <div class="twelve columns">
+    <div class="row">
+      <div class="nine columns left">
+        <a href="/">主页</a>
+        
+          
+          <a href="/archives" class="ml">归档</a>
+          
+        
+          
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/3843548383549214" class="ml">掘金</a>
+          
+        
+          
+          <a href="/About" class="ml">简介</a>
+          
+        
+        
+      </div>
+    </div>
+    <hr style="margin-bottom: 2.6rem">
+  </div>
+</div>
+
+        <div class="trans">
+            <h2>离职后才搞懂vue项目开发流程中的疑惑点</h2>
+
+  <p>在离职的最后一个月，帮两位同事申请加薪，确切的说，申请加薪是导火索，我被扣上了哄抬同事工资以提高自己工资的帽子，在推动前后端分离工作中处处碰壁，点燃了压抑许久的离职冲动，领导培养自己四五年，不让声张，答应悄悄离开。</p>
+<p>离开时原来公司项目里剩下很多问题没有解决，现在自己还在做vue和动画的项目，现在或许之前的问题已经解决了，但我还是把思路写下来，也算对的起自己悄悄离职的事情了，看到你们获得优秀团队奖的照片了，很棒，祝福你们👍👏👏👏。</p>
+<h3 id="自动部署"><a href="#自动部署" class="headerlink" title="自动部署"></a>自动部署</h3><p>这边用的是gitLab做git服务器，可以配置commit的钩子函数，实现自动部署和线上发布，就相当服务器监听你的提交，在你commit之后，服务器自动执行了一下<code>npm run build</code>，放到对应的测试服务器目录，配置文件在根目录下有<code>.gitlab-ci.yml</code>文件，起作用的是下边一段代码，<code>script</code>是linux脚本，拷贝文件到指定的静态资源CDN目录和web服务器目录，这块知识点是<code>gitlab-ci 持续集成</code>，可以关注一下，svn应该也有类似的配置，让运维帮忙给配一下吧。</p>
+<pre class="line-numbers language-none"><code class="language-none">npm-build-test:
+  image: cdn路径
+  stage: build
+  cache:
+    untracked: true
+    paths:
+      - node_modules&#x2F;
+  before_script:
+    - export BI_ENV&#x3D;&quot;test&quot;
+  script:
+    - &quot;npm install --registry&#x3D;http:&#x2F;&#x2F;代理地址 --sass_binary_site&#x3D;https:&#x2F;&#x2F;npm.taobao.org&#x2F;mirrors&#x2F;node-sass&#x2F;&quot; 
+    - &quot;npm run build&quot;
+    - &quot;rsync -auvz dist&#x2F;index.html  ip::服务器开发分支目录&#x2F;trunk&#x2F;resources&#x2F;views&#x2F;index&#x2F;&quot;
+    - &quot;rsync -auvz dist&#x2F;* 静态资源cdn目录&#x2F;trunk&#x2F;bi&#x2F;&quot;
+  only:
+    - master  分支名称
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="版本管理"><a href="#版本管理" class="headerlink" title="版本管理"></a>版本管理</h3><p>以前咱们经常出现这种情况， v0.1的需求已经上线，v0.2的需求已经提测了，v0.3的需求在开发中，现在要修复一下v1.0的线上bug，用svn的话可能就是把修复后的文件更新到三个分支上继续开发，更新来更新去就<code>lock</code>了。</p>
+<p>如果用git做版本管理，就方便很多，按照分支规范，常用4个分支，<br><code>Develop</code>持续开发分支，<code>Release</code>版本分支，<br><code>Hotfix</code>紧紧热修复分支，<code>Master</code>上线版本主分支，<br>可以看看<code>GitFlow工作流</code>方面的资料，真的比svn的分支好用太多了。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/1/24/1687b99acf98287f?w=614&h=380&f=png&s=35398"></p>
+<h3 id="脚手架升级与优化"><a href="#脚手架升级与优化" class="headerlink" title="脚手架升级与优化"></a>脚手架升级与优化</h3><p>我们目前在用webpack 4.0 和 vue-cli3.0，编译很快，建议升级，记得之前项目用vue-cli2.0编译和打包时间很长。</p>
+<h3 id="Ajax全局设置"><a href="#Ajax全局设置" class="headerlink" title="Ajax全局设置"></a>Ajax全局设置</h3><p>原来项目里用的是<code>jQuery.ajax</code>方法，其实也可以全局设置拦截，我们用的是<code>axios</code>，在<code>main.js</code>中引用，设置<strong>根路径、状态码、token、超时时间</strong>等全局设置，代码如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; 引入axios
+import axios from &#39;axios&#39;
+&#x2F;&#x2F; axios配置
+Vue.prototype.$http &#x3D; axios
+
+&#x2F;&#x2F; 配置默认axios参数
+axios.defaults.baseURL &#x3D; &#39;&#x2F;&#39;
+axios.defaults.timeout &#x3D; 1000000
+axios.defaults.headers.post[&#39;Content-Type&#39;] &#x3D; &#39;application&#x2F;x-www-form-urlencoded;charset&#x3D;UTF-8&#39;
+
+&#x2F;&#x2F; 添加请求拦截器
+axios.interceptors.request.use(function (config) &#123;
+  let token &#x3D; localStorage.getItem(&#39;token&#39;)
+  if(token&#x3D;&#x3D; null &amp;&amp; router.currentRoute.path &#x3D;&#x3D; &#39;&#x2F;login&#39;)&#123;&#x2F;&#x2F; 本地无token,不为登录 跳转至登录页面
+    router.push(&#39;&#x2F;login&#39;)
+  &#125;else&#123;
+    if(config.data&#x3D;&#x3D;undefined)&#123;
+      config.data &#x3D; &#123;
+        &quot;token&quot;:token
+      &#125;
+    &#125;else&#123;
+      Object.assign(config.data,&#123;&quot;token&quot;:token&#125;)
+    &#125;
+
+  &#125;
+  return config
+&#125;, function (error) &#123;
+  iView.Message.error(&#39;请求失败&#39;)
+  return Promise.reject(error)
+&#125;)
+
+&#x2F;&#x2F; 返回结果拦截
+axios.interceptors.response.use(function (response) &#123;
+  if(response.hasOwnProperty(&quot;data&quot;) &amp;&amp; typeof response.data &#x3D;&#x3D; &quot;object&quot;)&#123;
+      if(response.data.code &#x3D;&#x3D;&#x3D; 998)&#123;&#x2F;&#x2F; 登录超时 跳转至登录页面
+          iView.Message.error(response.data.msg)
+          router.push(&#39;&#x2F;login&#39;)
+          return Promise.reject(response)
+      &#125;else if (response.data.code &#x3D;&#x3D;&#x3D; 1000) &#123;&#x2F;&#x2F; 成功
+        return Promise.resolve(response)
+      &#125;
+  &#125; else &#123;
+    return Promise.resolve(response)
+  &#125;
+
+&#125;, function (error) &#123;
+  &#x2F;&#x2F; 请求取消 不弹出
+  if(error.message !&#x3D; &#39;0000&#39;)&#123;
+    iView.Message.error(&#39;请求失败&#39;)
+  &#125;
+
+  &#x2F;&#x2F; 请求错误时做些事
+  return Promise.reject(error)
+&#125;)
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="异步操作与数据遍历"><a href="#异步操作与数据遍历" class="headerlink" title="异步操作与数据遍历"></a>异步操作与数据遍历</h3><p>原来的项目是保险项目，大家没有前后端分离的业务系统经验，都是<strong>最基础的接口</strong>，一个一个接口都是从数据字典中取出，业务逻辑往前端移，<strong>导致前端有很多的串行、并行的异步操作</strong>，请求各种接口，然后遍历合并各种数据，串行并行我们用<code>promise</code>写，异步操作的问题就解决了，数据的操作我们用<code>lodash.js</code>，效率比手写快，这两块可以加深一下。</p>
+<pre class="line-numbers language-none"><code class="language-none">initializationTab(obj)&#123;
+    let This &#x3D; this
+    return new Promise((resolve, reject) &#x3D;&gt; &#123;
+        This.$http
+            .post(&#39;&#x2F;api&#x2F;show&#x2F;ograde-header&#39;,obj)
+            .then(function(response) &#123;
+              return resolve(response.data.datas)
+            &#125;)
+            .catch(function(error) &#123;
+
+                &#x2F;&#x2F;数据丢失的状态
+                This.isContent&#x3D;false   &#x2F;&#x2F;是否展示加载后内容
+                This.isLoading&#x3D;false   &#x2F;&#x2F;是否展示loading
+                This.isContentError&#x3D;true 
+                This.isReady &#x3D; false &#x2F;&#x2F;是否展示数据准备中状态
+                reject(error)
+            &#125;);
+    &#125;)
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p>原来项目登录是跳转到jsp登录页面，然后再跳回静态页面，<code>sessionID</code>就存到<code>cookie</code>里了，建立会话，<strong>也可以<code>Form</code>提交做登录，</strong> 正常走接口，也会在<code>cookie</code>里存上<code>sessionID</code>建立会话。</p>
+<p>当然前后端分离最好用<code>JWT</code>方案，把生成的<code>token</code>放在<code>redis</code>里，建立<code>事务</code>,<code>token</code>过期后自动删除，<strong>如有提前退出，则给改<code>token</code>打上标识，不通过该<code>token</code>通过即可</strong>，<strong>续签也好解决</strong>，在如果<code>token</code>在到期5分钟前访问，则生成新<code>token</code>返回给前端，给即将过期的<code>token</code>打上标识，到期后自动删除。</p>
+<h3 id="H5动画"><a href="#H5动画" class="headerlink" title="H5动画"></a>H5动画</h3><p>我们H5动画做了很多尝试，民生银行的蓝精灵主题、租房分期、招聘3D、消消乐等，在适配、时间轴、精灵图、动画性能等方面有了一定积累，笔记夭折在我的MWeb编辑器里，如果后边有时间再更新出来吧。</p>
+<p>之前蓝精灵动画需求用的<code>TweenMax.js</code>和<code>gka</code>生成的css帧动画做了那么复杂的一个效果，性能不是特别好，毕竟操作的是DOM，如果动画需求还多，就多熟悉熟悉<code>PIXI.js+TweenMax.js</code>两个工具吧，我刚用它们做了一个需求，<code>PIXI.js</code>有加载器、精灵图、滤镜、物理引擎、音视频等好多辅助工具，基本可以实现大部分我们在朋友圈看到的H5效果，<code>PIXI.js</code>支持<code>canvas</code>和<code>webGL</code>两种渲染。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/1/24/1687bd5f866be363?w=483&h=269&f=gif&s=2014168"></p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/1/24/1687be36bb53bac3?w=493&h=263&f=gif&s=4394991"></p>
+<h3 id="通读API"><a href="#通读API" class="headerlink" title="通读API"></a>通读API</h3><p>最新的项目是自己搭建的vue架子，功能和场景也慢慢复杂起来，还是要多看api和文档，多了解原理，才能游刃有余的使用这些工具，高效的完成开发任务，比如vue的组件递归、缓存、强制刷新、混入、过滤器，Axios的默认配置、CancelToken等等，最近的项目笔记总结还没有写完，先把目录贴出来，期望进步吧。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/1/24/1687bf0c6a18e16a?w=992&h=1024&f=png&s=225533"></p>
+<p>如果你们还在从事前端，相忘于江湖吧🤣😂。</p>
+
+  <p> — 2021年7月4日</p>
+  
+
+
+          <div class="row mt-2">
+  
+    <div class="eight columns">
+      <p id="madewith" style="color: #c7c7c7;">静水流深，闻喧享静。空山鸣响，见惯司空。
+        
+    </div>
+
+    <!-- Sepcial thanks to https://simpleicons.org/ for the icons -->
+    <div class="four columns mb-3 posisi" >
+      
+      <a class="ml-0 footer-link icon" href="https://github.com/nihaojob" target="_blank" style="text-decoration: none" rel="noreferrer" aria-label="GitHub">
+        <svg class="github svg-hov" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      </a>
+      
+
+      
+
+      
+
+      
+
+      
+
+    </div>
+  
+</div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <script src="/js/nanobar.min.js"></script>
+  <script>
+    var options = {
+      classname: 'nanobar',
+      id: 'myNanobar'
+    };
+    var nanobar = new Nanobar(options);
+    nanobar.go(30);
+    nanobar.go(76);
+    nanobar.go(100);
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <!-- Minima -->
+  <!-- Hexo theme created by @adisaktijrs -->
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+
+  
+  <title>使用TypeScript + React发布组件到Npm</title>
+  
+  <link rel="canonical" href="http://example.com/2021/07/04/npm-react-ts/">
+  
+  <meta name="description" content="最近封装了项目中使用的React地图组件，摸爬滚打发布到npm上；学到的知识点也比较散，如TypeScript、Commit规范/版本语义化、React组件测试、Npm发布更新、Readme模板、组件文档搭建等，有的知识点也是浅尝辄止（一知半解😱），先记录下来，后期有时间深挖。  ✨ GitHub">
+  
+  
+  <meta name="author" content="nihaojob@163.com">
+  
+  <meta property="og:image" content="http://example.comundefined">
+  
+  <meta property="og:site_name" content="秦少卫的博客" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="使用TypeScript + React发布组件到Npm" />
+  
+  <meta property="og:description" content="最近封装了项目中使用的React地图组件，摸爬滚打发布到npm上；学到的知识点也比较散，如TypeScript、Commit规范/版本语义化、React组件测试、Npm发布更新、Readme模板、组件文档搭建等，有的知识点也是浅尝辄止（一知半解😱），先记录下来，后期有时间深挖。  ✨ GitHub">
+  
+  <meta property="og:url" content="http://example.com/2021/07/04/npm-react-ts/" />
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="使用TypeScript + React发布组件到Npm">
+  
+  <meta name="twitter:description" content="最近封装了项目中使用的React地图组件，摸爬滚打发布到npm上；学到的知识点也比较散，如TypeScript、Commit规范/版本语义化、React组件测试、Npm发布更新、Readme模板、组件文档搭建等，有的知识点也是浅尝辄止（一知半解😱），先记录下来，后期有时间深挖。  ✨ GitHub">
+  
+  
+  <meta name="twitter:image" content="http://example.comundefined">
+  
+  <meta name="twitter:url" content="http://example.com/2021/07/04/npm-react-ts/" />
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Preload fonts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="preload" href="../fonts/dm-serif-display-v4-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/inter-v2-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+<link rel="stylesheet" href="/css/normalize.css">
+
+  
+<link rel="stylesheet" href="/css/skeleton.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+<link rel="stylesheet" href="/css/prism-dark.css">
+
+  
+<link rel="stylesheet" href="/css/prism-line-numbers.css">
+
+  <!-- User css -->
+  
+  
+<link rel="stylesheet" href="/css/user.css">
+
+  
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+  <!-- Custom Theme Color Style
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <style>
+  a:not(.icon) {
+    text-decoration-color: #0FA0CE;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 50%,
+      #0FA0CE 50%
+    );
+  }
+  blockquote {
+    border-left: 8px solid #0FA0CE;
+  }
+  .nanobar .bar {
+    background: #0FA0CE;
+  }
+  .button.button-primary:hover,
+  button.button-primary:hover,
+  input[type="submit"].button-primary:hover,
+  input[type="reset"].button-primary:hover,
+  input[type="button"].button-primary:hover,
+  .button.button-primary:focus,
+  button.button-primary:focus,
+  input[type="submit"].button-primary:focus,
+  input[type="reset"].button-primary:focus,
+  input[type="button"].button-primary:focus {
+    background-color: #0FA0CE;
+    border-color: #0FA0CE;
+  }
+  input[type="email"]:focus,
+  input[type="number"]:focus,
+  input[type="search"]:focus,
+  input[type="text"]:focus,
+  input[type="tel"]:focus,
+  input[type="url"]:focus,
+  input[type="password"]:focus,
+  textarea:focus,
+  select:focus {
+    border: 1px solid #0FA0CE;
+  }
+</style>
+
+  <!-- Google Analytics (With Privacy Settings On)
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div>
+
+        <div class="row">
+  <div class="two columns" style="max-width: 50px">
+    <h1 class="mt-2 mode">
+      <div onclick=setDarkMode(true) id="darkBtn">🌑</div>
+      <div onclick=setDarkMode(false) id="lightBtn" class=hidden>☀️</div>
+      <script >
+        if (localStorage.getItem('preferredTheme') == 'dark') {
+          setDarkMode(true)
+        }
+        function setDarkMode(isDark) {
+          var darkBtn = document.getElementById('darkBtn')
+          var lightBtn = document.getElementById('lightBtn')
+          if (isDark) {
+            lightBtn.style.display = "block"
+            darkBtn.style.display = "none"
+            localStorage.setItem('preferredTheme', 'dark');
+          } else {
+            lightBtn.style.display = "none"
+            darkBtn.style.display = "block"
+            localStorage.removeItem('preferredTheme');
+          }
+          document.body.classList.toggle("darkmode");
+        }
+      </script>
+    </h1>
+  </div>
+
+  <div class="six columns ml-1">
+    <h1 class="mt-2">
+      秦少卫的博客
+    </h1>
+  </div>
+
+  <div class="twelve columns">
+    <div class="row">
+      <div class="nine columns left">
+        <a href="/">主页</a>
+        
+          
+          <a href="/archives" class="ml">归档</a>
+          
+        
+          
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/3843548383549214" class="ml">掘金</a>
+          
+        
+          
+          <a href="/About" class="ml">简介</a>
+          
+        
+        
+      </div>
+    </div>
+    <hr style="margin-bottom: 2.6rem">
+  </div>
+</div>
+
+        <div class="trans">
+            <h2>使用TypeScript + React发布组件到Npm</h2>
+
+  <p>最近封装了项目中使用的React地图组件，摸爬滚打发布到npm上；学到的知识点也比较散，如TypeScript、Commit规范/版本语义化、React组件测试、Npm发布更新、Readme模板、组件文档搭建等，有的知识点也是浅尝辄止（一知半解😱），先记录下来，后期有时间深挖。</p>
+<ul>
+<li>✨ GitHub主页：<a target="_blank" rel="noopener" href="https://github.com/nihaojob/mapLine">https://github.com/nihaojob/mapLine</a></li>
+<li>文档地址：<a target="_blank" rel="noopener" href="http://nihaojob.gitee.io/carui/#/carui/maps">http://nihaojob.gitee.io/carui/#/carui/maps</a></li>
+<li>Npm主页：<a target="_blank" rel="noopener" href="https://www.npmjs.com/package/maplib2">https://www.npmjs.com/package/maplib2</a></li>
+</ul>
+<h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><ol>
+<li>脚手架选择</li>
+<li>tsdx使用与配置</li>
+<li>TypeScript基础</li>
+<li>Commit规范</li>
+<li>Npm发布/配置/更新</li>
+<li>Readme模板</li>
+<li>React测试</li>
+<li>组件文档搭建</li>
+</ol>
+<h3 id="1-脚手架选择"><a href="#1-脚手架选择" class="headerlink" title="1. 脚手架选择"></a>1. 脚手架选择</h3><p>发布前看了很多教程，都是自己配置Webpack、Babel、Rollup，辅助的还有ESLint、Jest，想想都头大，社区有很多<strong>开箱即用的零配置脚手架</strong>，我用的<code>tsdx</code>，自行参考吧。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/transitive-bullshit/create-react-library#readme">create-react-library</a> 有中文文档</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Hermanya/create-react-hook#create-react-hook">create-react-hook</a> Hook + TypeScript</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/insin/nwb">nwb</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/formik/tsdx">tsdx</a></li>
+</ul>
+<p>有推荐或更好用的脚手架还请告知😘，留着下次用。</p>
+<h3 id="2-tsdx使用与配置"><a href="#2-tsdx使用与配置" class="headerlink" title="2. tsdx使用与配置"></a>2. tsdx使用与配置</h3><p>按照文档生成项目即可，需自己手动配置Less、ESLint，如下：</p>
+<h4 id="Less配置"><a href="#Less配置" class="headerlink" title="Less配置"></a>Less配置</h4><p>安装依赖插件</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">yarn</span> <span class="token function">add</span> rollup-plugin-postcss autoprefixer cssnano <span class="token function">less</span> --dev<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>tsdx.config.js配置文件修改</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">const</span> postcss <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'rollup-plugin-postcss'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> autoprefixer <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'autoprefixer'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> cssnano <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'cssnano'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+  <span class="token function">rollup</span><span class="token punctuation">(</span><span class="token parameter">config<span class="token punctuation">,</span> options</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    config<span class="token punctuation">.</span>plugins<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>
+      <span class="token function">postcss</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>
+        plugins<span class="token operator">:</span> <span class="token punctuation">[</span>
+          <span class="token function">autoprefixer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+          <span class="token function">cssnano</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>
+            preset<span class="token operator">:</span> <span class="token string">'default'</span><span class="token punctuation">,</span>
+          <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token punctuation">]</span><span class="token punctuation">,</span>
+        inject<span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+        <span class="token comment">// only write out CSS for the first bundle (avoids pointless extra files):</span>
+        <span class="token comment">// extract: !!options.writeMeta,</span>
+        extract<span class="token operator">:</span> <span class="token string">'mapLine.min.css'</span><span class="token punctuation">,</span>
+      <span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> config<span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="ESLint配置"><a href="#ESLint配置" class="headerlink" title="ESLint配置"></a>ESLint配置</h4><p>脚手架创建的项目没有<code>.eslintrc.js</code>和<code>.eslintignore</code>文件，需手动添加。</p>
+<p>也可以用<code>yarn lint --write-file</code>生成，文档有说明。</p>
+<p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/602ed25a76874764a4ea67887a7a09a8~tplv-k3u1fbpfcp-zoom-1.image"></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/nihaojob/mapLine/blob/master/.eslintrc.js"><code>.eslintrc.js</code></a>文件：</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+  <span class="token string">"extends"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token string">"react-app"</span><span class="token punctuation">,</span>
+    <span class="token string">"prettier/@typescript-eslint"</span><span class="token punctuation">,</span>
+    <span class="token string">"plugin:prettier/recommended"</span> <span class="token comment">// 重点</span>
+  <span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token string">"settings"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token string">"react"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      <span class="token string">"version"</span><span class="token operator">:</span> <span class="token string">"detect"</span>
+    <span class="token punctuation">&#125;</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="Start-预览"><a href="#Start-预览" class="headerlink" title="Start 预览"></a>Start 预览</h4><p>源码在<code>src</code>目录下，<code>example</code>目录可预览，需要分别在根目录和<code>example</code>下安装依赖和<code>Start</code>，先在根目录<code>Start</code>再<code>example Start</code>。</p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/6844904162497757192">参考教程</a></p>
+<h3 id="3-TypeScript基础"><a href="#3-TypeScript基础" class="headerlink" title="3. TypeScript基础"></a>3. TypeScript基础</h3><p>刚开始使用<code>TypeScript</code>很可能会写出<code>AnyScript</code>风格的代码，画风如下🙋（我写的）。</p>
+<p>阮一峰推荐教程：<a target="_blank" rel="noopener" href="https://ts.xcatliu.com/">TypeScript 入门教程</a>很赞 👍。</p>
+<p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6a7f4dfe2dcc4e2bb8e995159c74dabc~tplv-k3u1fbpfcp-zoom-1.image"></p>
+<p>我是先用jsx写出功能，又迁移到<code>TypeScript</code>，记录几个常用的<code>Interface</code>定义语法。</p>
+<h4 id="非必选"><a href="#非必选" class="headerlink" title="非必选"></a>非必选</h4><p>在类型定义中，有些属性为非必须参数，使用<code>?</code>标识。</p>
+<pre class="line-numbers language-ts" data-language="ts"><code class="language-ts">interface anime &#123;
+  show?: boolean;
+  icon?: string;
+  pathColor?: string;
+  type?: string;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="数组类型"><a href="#数组类型" class="headerlink" title="数组类型"></a>数组类型</h4><p>在数组中放置对象，可使用<code>Array&lt;InterfaceName&gt;</code>或<code>InterfaceName[]</code>定义。</p>
+<pre class="line-numbers language-ts" data-language="ts"><code class="language-ts">interface pathItem &#123;
+  iconText: string;
+  title: string;
+  theme?: number;
+&#125;
+
+interface defaultOptions &#123;
+  path: Array&lt;pathItem&gt;;
+  pathColor?: string;
+  donePath?: pathItem[];
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="未知属性、继承"><a href="#未知属性、继承" class="headerlink" title="未知属性、继承"></a>未知属性、继承</h4><p>已知属性名但不知道类型，可以用<code>any</code>定义，未知属性名已知类型可使用<code>[propName: string]: string;</code>定义；为了不重复定义，使用<code>extends</code>关键词继承其他<code>interface</code>。</p>
+<p>代码：</p>
+<pre class="line-numbers language-ts" data-language="ts"><code class="language-ts">interface pathItem extends donePathItem &#123;
+  iconText: string;
+  title: string;
+  [propName: string]: any;
+&#125;
+
+interface donePathItem &#123;
+  LT: number[];
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="4-Commit规范"><a href="#4-Commit规范" class="headerlink" title="4. Commit规范"></a>4. Commit规范</h3><p>之前对Git规范不是很深入，只有使用 <code>git rebase</code>合并一些无用<code>commit</code>信息，推荐下开源的规范文档。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html">阮一峰：Commit message 和 Change log 编写指南</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.conventionalcommits.org/zh-hans/v1.0.0-beta.4/">约定式提交</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit">Angular 提交准则 英文</a></li>
+</ul>
+<h4 id="7个类别"><a href="#7个类别" class="headerlink" title="7个类别"></a>7个类别</h4><p>翻看了几个开源项目的<code>commit</code>和规范说明，主要是标明<code>commit</code>的7个类别。</p>
+<pre class="line-numbers language-none"><code class="language-none">- feat：新功能（feature）
+- fix：修补bug
+- docs：文档（documentation）
+- style： 格式（不影响代码运行的变动）
+- refactor：重构（即不是新增功能，也不是修改bug的代码变动）
+- test：增加测试
+- chore：构建过程或辅助工具的变动<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="VsCode插件使用"><a href="#VsCode插件使用" class="headerlink" title="VsCode插件使用"></a>VsCode插件使用</h4><p>我个人主要是在<code>VsCode</code>中提交<code>Commit</code>，推荐2个插件。</p>
+<p>快捷生成message：<a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=redjue.git-commit-plugin">git-commit-plugin</a></p>
+<p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0cc28373ef8c4dfb8af54ebb65c1bf82~tplv-k3u1fbpfcp-zoom-1.image"></p>
+<p>Commit记录展示：<a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=donjayamanne.githistory">Git History</a></p>
+<p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c91a18711a664c538a94f702c199b5d1~tplv-k3u1fbpfcp-zoom-1.image"></p>
+<h4 id="命令行配置"><a href="#命令行配置" class="headerlink" title="命令行配置"></a>命令行配置</h4><p>在命令行中使用<code>Git</code>可以使用<code>Commitizen</code>生成<code>Commit message</code>模板，并用<code>Commitlint</code>检查；参见<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/34223150">教程</a>。</p>
+<h3 id="5-Npm发布-配置-更新"><a href="#5-Npm发布-配置-更新" class="headerlink" title="5. Npm发布/配置/更新"></a>5. Npm发布/配置/更新</h3><p>注册不再赘述，我这么笨的人都可以搞定，聪明的你一定没问题👩‍🎓‍，以下是细节。</p>
+<h4 id="打包路径"><a href="#打包路径" class="headerlink" title="打包路径"></a>打包路径</h4><p>使用<code>yarn build</code>打包完以后，文件生成到<code>dist</code>目录，检查<code>package.json</code>中的<code>main</code>与打包路径一致即可。</p>
+<h4 id="主页与仓库地址"><a href="#主页与仓库地址" class="headerlink" title="主页与仓库地址"></a>主页与仓库地址</h4><p>正确配置<code>homepage</code>和<code>repository</code>才能在<code>Npm</code>介绍中展示出来。</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+  <span class="token property">"homepage"</span><span class="token operator">:</span> <span class="token string">"http://nihaojob.gitee.io/carui/#/carui/maps"</span><span class="token punctuation">,</span>
+  <span class="token property">"repository"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"git"</span><span class="token punctuation">,</span>
+    <span class="token property">"url"</span><span class="token operator">:</span> <span class="token string">"git+https://github.com/nihaojob/mapLine.git"</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0b30d109f86f42e69dcb4ad60375df80~tplv-k3u1fbpfcp-zoom-1.image"></p>
+<h4 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h4><p>国内很多小伙伴设置过npm镜像源，记得还原为官方，然后按照提示输入信息就成功了，简单吧💁 ？</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">npm</span> config <span class="token builtin class-name">set</span> registry https://registry.npmjs.org/
+$ <span class="token function">npm</span> publish<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h4 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h4><p>修改Readem文件后，使用以下命令更新。</p>
+<p>官方文档：<a target="_blank" rel="noopener" href="https://docs.npmjs.com/about-package-readme-files">https://docs.npmjs.com/about-package-readme-files</a></p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">npm</span> version patch  // <span class="token number">1.0</span>.1 表示小的bug修复
+$ <span class="token function">npm</span> version minor // <span class="token number">1.1</span>.0 表示新增一些小功能
+$ <span class="token function">npm</span> version mmajor // <span class="token number">2.0</span>.0 表示大的版本或大升级
+$ <span class="token function">npm</span> version preminor // <span class="token number">1.1</span>.0-0 后面多了个0，表示预发布<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">npm</span> version patch
+$ <span class="token function">npm</span> publish<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>版本也要遵循规范，没有来得及深挖，先留坑位🏌。</p>
+<ul>
+<li>语义化版本 2.0.0：<a target="_blank" rel="noopener" href="https://semver.org/lang/zh-CN/">https://semver.org/lang/zh-CN/</a></li>
+</ul>
+<h3 id="6-Readme模板"><a href="#6-Readme模板" class="headerlink" title="6. Readme模板"></a>6. Readme模板</h3><p><code>Readme</code>应该告诉人们为什么应该使用以及如何安装、使用。留坑优化🏌。</p>
+<h4 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h4><p>推荐一份高Start的模板：<a target="_blank" rel="noopener" href="https://github.com/RichardLitt/standard-readme">standard-readme</a>。</p>
+<p>也可以使用<a target="_blank" rel="noopener" href="https://github.com/kefranabg/readme-md-generator">readme-md-generator</a>交互式的生成<code>Readme</code>文件。</p>
+<p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2b9fece8099f42429f4111729ddbd56a~tplv-k3u1fbpfcp-zoom-1.image"></p>
+<h4 id="徽标生成"><a href="#徽标生成" class="headerlink" title="徽标生成"></a>徽标生成</h4><p><a target="_blank" rel="noopener" href="https://shields.io/">https://shields.io</a>可根据GitHub仓库自动生成徽标。</p>
+<p><strong>CI徽标</strong></p>
+<p>GitHub配置的<code>Actions</code>成功执行，就可以从CI页面拷贝徽标。</p>
+<p><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2019/09/getting-started-with-github-actions.html">阮一峰：GitHub Actions 入门教程</a></p>
+<p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/de6e915ee5f145aaac5762d5ec5fb7a2~tplv-k3u1fbpfcp-zoom-1.image"></p>
+<p><strong>测试覆盖率徽标</strong></p>
+<p>多种多样的的工具和方法，我还没学会，等我更新🏌。</p>
+<h3 id="7-React测试"><a href="#7-React测试" class="headerlink" title="7. React测试"></a>7. React测试</h3><p>tsdx并没有自动生成<code>jest.config.js</code>文件，如需定义可以手动增加，列下遇见的问题。</p>
+<h4 id="组件中引入less报错"><a href="#组件中引入less报错" class="headerlink" title="组件中引入less报错"></a>组件中引入less报错</h4><p>安装依赖</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">yarn</span> <span class="token function">add</span> --dev identity-obj-proxy<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><code>package.json</code>配置moduleNameMapper</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+ <span class="token property">"jest"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token property">"moduleNameMapper"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      <span class="token property">"\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$"</span><span class="token operator">:</span> <span class="token string">"&lt;rootDir>/__mocks__/fileMock.js"</span><span class="token punctuation">,</span>
+      <span class="token property">"\\.(css|less)$"</span><span class="token operator">:</span> <span class="token string">"identity-obj-proxy"</span>
+    <span class="token punctuation">&#125;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="document-is-not-defined"><a href="#document-is-not-defined" class="headerlink" title="document is not defined"></a>document is not defined</h4><p>在测试文件头部增加环境说明，<a target="_blank" rel="noopener" href="https://github.com/nihaojob/mapLine/blob/master/test/blah.test.tsx">例子</a>。</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;**
+ * @jest-environment jsdom
+ *&#x2F;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="引入第三方sdk"><a href="#引入第三方sdk" class="headerlink" title="引入第三方sdk"></a>引入第三方sdk</h4><p>我在组件内有使用高德的全局变量，需要高德的SDK文件加载完毕后再执行测试，参考了<a target="_blank" rel="noopener" href="https://github.com/ElemeFE/react-amap">react-amap</a>的实现。</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">// PromiseScript加载</span>
+<span class="token keyword">function</span> <span class="token function">getAmapuiPromise</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+  <span class="token keyword">const</span> script <span class="token operator">=</span> <span class="token function">buildScriptTag</span><span class="token punctuation">(</span>
+    <span class="token string">'https://webapi.amap.com/maps?v=1.4.15&amp;key=你的key&amp;plugin=AMap.Driving'</span>
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">const</span> p <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Promise</span><span class="token punctuation">(</span><span class="token parameter">resolve</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+    script<span class="token punctuation">.</span><span class="token function-variable function">onload</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+      <span class="token function">resolve</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  document<span class="token punctuation">.</span>body<span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>script<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> p<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token comment">// 创建script标签</span>
+<span class="token keyword">function</span> <span class="token function">buildScriptTag</span><span class="token punctuation">(</span><span class="token parameter">src<span class="token operator">:</span> string</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+  <span class="token keyword">const</span> script <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">createElement</span><span class="token punctuation">(</span><span class="token string">'script'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  script<span class="token punctuation">.</span>type <span class="token operator">=</span> <span class="token string">'text/javascript'</span><span class="token punctuation">;</span>
+  script<span class="token punctuation">.</span>async <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+  script<span class="token punctuation">.</span>defer <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+  script<span class="token punctuation">.</span>src <span class="token operator">=</span> src<span class="token punctuation">;</span>
+  <span class="token keyword">return</span> script<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token function">describe</span><span class="token punctuation">(</span><span class="token string">'it'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+  <span class="token function">it</span><span class="token punctuation">(</span><span class="token string">'正常渲染'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 加载高德后执行</span>
+    <span class="token function">getAmapuiPromise</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+      <span class="token function">initDemo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">function</span> <span class="token function">initDemo</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token keyword">const</span> div <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">createElement</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      ReactDOM<span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span><span class="token operator">&lt;</span>Maps <span class="token punctuation">&#123;</span><span class="token operator">...</span>options<span class="token punctuation">&#125;</span> <span class="token operator">/</span><span class="token operator">></span><span class="token punctuation">,</span> div<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      ReactDOM<span class="token punctuation">.</span><span class="token function">unmountComponentAtNode</span><span class="token punctuation">(</span>div<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="8-组件文档搭建"><a href="#8-组件文档搭建" class="headerlink" title="8. 组件文档搭建"></a>8. 组件文档搭建</h3><p>有很多类似的工具，主要是为了解决组件文档的问题。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/benjycui/bisheng">bisheng</a> Ant 系列在用</li>
+<li><a target="_blank" rel="noopener" href="https://d.umijs.org/">dumi</a> umi系列</li>
+<li><a target="_blank" rel="noopener" href="https://vuepress.vuejs.org/zh/">VuePress</a> Vue</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/imweb/redemo">redemo</a> 腾讯出品 单个组件</li>
+<li><a target="_blank" rel="noopener" href="https://www.docz.site/">Docz</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.gatsbyjs.org/">Gatsby.js</a> React官网在用</li>
+</ul>
+<p>我选了dumi，原因是文档好看💁，dumi刚发布不久，但使用体验真的不错。</p>
+<p>官方介绍为：是一款基于 Umi 打造、为组件开发场景而生的文档工具。</p>
+<p><img src="//p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/604333ff894b470d88f8d50f3028ae36~tplv-k3u1fbpfcp-zoom-1.image"></p>
+<p>文档源码：<a target="_blank" rel="noopener" href="https://gitee.com/nihaojob/CarUI">https://gitee.com/nihaojob/CarUI</a></p>
+<h3 id="留坑与总结"><a href="#留坑与总结" class="headerlink" title="留坑与总结"></a>留坑与总结</h3><p>还有很多没有搞定的事情，需要学的也越来越多，为了<strong>质量和落地</strong>，先列个ToDoList。</p>
+<ul>
+<li><input disabled="" type="checkbox"> VsCode Jest debug配置</li>
+<li><input disabled="" type="checkbox"> React Jest 补充测试用例</li>
+<li><input disabled="" type="checkbox"> 测试覆盖率徽标</li>
+<li><input disabled="" type="checkbox"> Readme按照模板修改</li>
+<li><input disabled="" type="checkbox"> 版本语义化落地</li>
+<li><input disabled="" type="checkbox"> np工具熟悉</li>
+<li><input disabled="" type="checkbox"> TypeScript深入学习</li>
+</ul>
+<p><strong>才疏学浅，恳请斧正</strong>，还请Stars、点赞鼓励💁。</p>
+<p>GitHub项目：<a target="_blank" rel="noopener" href="https://github.com/nihaojob/mapLine">https://github.com/nihaojob/mapLine</a></p>
+
+  <p> — 2021年7月4日</p>
+  
+
+
+          <div class="row mt-2">
+  
+    <div class="eight columns">
+      <p id="madewith" style="color: #c7c7c7;">静水流深，闻喧享静。空山鸣响，见惯司空。
+        
+    </div>
+
+    <!-- Sepcial thanks to https://simpleicons.org/ for the icons -->
+    <div class="four columns mb-3 posisi" >
+      
+      <a class="ml-0 footer-link icon" href="https://github.com/nihaojob" target="_blank" style="text-decoration: none" rel="noreferrer" aria-label="GitHub">
+        <svg class="github svg-hov" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      </a>
+      
+
+      
+
+      
+
+      
+
+      
+
+    </div>
+  
+</div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <script src="/js/nanobar.min.js"></script>
+  <script>
+    var options = {
+      classname: 'nanobar',
+      id: 'myNanobar'
+    };
+    var nanobar = new Nanobar(options);
+    nanobar.go(30);
+    nanobar.go(76);
+    nanobar.go(100);
+  </script>
+
+</body>
+
+</html>

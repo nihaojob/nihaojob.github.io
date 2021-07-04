@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <!-- Minima -->
+  <!-- Hexo theme created by @adisaktijrs -->
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+
+  
+  <title>React无门槛实现拖拽布局、表单设计器</title>
+  
+  <link rel="canonical" href="http://example.com/2021/07/04/react-drag-layout/">
+  
+  <meta name="description" content="现在有很多优秀的拖拽布局工具，表单设计器，layui拖拽布局, Vue-Layout。 我们最近也实现了类似的功能，废话不多说，先把预览贴出来（不知道为什么掘金现在图片不支持gif了，还要自己上传到图床）。  在实现这个的功能的过程中，也走了一点弯路，我们内部1.0版本的时候，使用的是sortabl">
+  
+  
+  <meta name="author" content="nihaojob@163.com">
+  
+  <meta property="og:image" content="http://example.comundefined">
+  
+  <meta property="og:site_name" content="秦少卫的博客" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="React无门槛实现拖拽布局、表单设计器" />
+  
+  <meta property="og:description" content="现在有很多优秀的拖拽布局工具，表单设计器，layui拖拽布局, Vue-Layout。 我们最近也实现了类似的功能，废话不多说，先把预览贴出来（不知道为什么掘金现在图片不支持gif了，还要自己上传到图床）。  在实现这个的功能的过程中，也走了一点弯路，我们内部1.0版本的时候，使用的是sortabl">
+  
+  <meta property="og:url" content="http://example.com/2021/07/04/react-drag-layout/" />
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="React无门槛实现拖拽布局、表单设计器">
+  
+  <meta name="twitter:description" content="现在有很多优秀的拖拽布局工具，表单设计器，layui拖拽布局, Vue-Layout。 我们最近也实现了类似的功能，废话不多说，先把预览贴出来（不知道为什么掘金现在图片不支持gif了，还要自己上传到图床）。  在实现这个的功能的过程中，也走了一点弯路，我们内部1.0版本的时候，使用的是sortabl">
+  
+  
+  <meta name="twitter:image" content="http://example.comundefined">
+  
+  <meta name="twitter:url" content="http://example.com/2021/07/04/react-drag-layout/" />
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Preload fonts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="preload" href="../fonts/dm-serif-display-v4-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/inter-v2-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+<link rel="stylesheet" href="/css/normalize.css">
+
+  
+<link rel="stylesheet" href="/css/skeleton.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+<link rel="stylesheet" href="/css/prism-dark.css">
+
+  
+<link rel="stylesheet" href="/css/prism-line-numbers.css">
+
+  <!-- User css -->
+  
+  
+<link rel="stylesheet" href="/css/user.css">
+
+  
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+  <!-- Custom Theme Color Style
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <style>
+  a:not(.icon) {
+    text-decoration-color: #0FA0CE;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 50%,
+      #0FA0CE 50%
+    );
+  }
+  blockquote {
+    border-left: 8px solid #0FA0CE;
+  }
+  .nanobar .bar {
+    background: #0FA0CE;
+  }
+  .button.button-primary:hover,
+  button.button-primary:hover,
+  input[type="submit"].button-primary:hover,
+  input[type="reset"].button-primary:hover,
+  input[type="button"].button-primary:hover,
+  .button.button-primary:focus,
+  button.button-primary:focus,
+  input[type="submit"].button-primary:focus,
+  input[type="reset"].button-primary:focus,
+  input[type="button"].button-primary:focus {
+    background-color: #0FA0CE;
+    border-color: #0FA0CE;
+  }
+  input[type="email"]:focus,
+  input[type="number"]:focus,
+  input[type="search"]:focus,
+  input[type="text"]:focus,
+  input[type="tel"]:focus,
+  input[type="url"]:focus,
+  input[type="password"]:focus,
+  textarea:focus,
+  select:focus {
+    border: 1px solid #0FA0CE;
+  }
+</style>
+
+  <!-- Google Analytics (With Privacy Settings On)
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div>
+
+        <div class="row">
+  <div class="two columns" style="max-width: 50px">
+    <h1 class="mt-2 mode">
+      <div onclick=setDarkMode(true) id="darkBtn">🌑</div>
+      <div onclick=setDarkMode(false) id="lightBtn" class=hidden>☀️</div>
+      <script >
+        if (localStorage.getItem('preferredTheme') == 'dark') {
+          setDarkMode(true)
+        }
+        function setDarkMode(isDark) {
+          var darkBtn = document.getElementById('darkBtn')
+          var lightBtn = document.getElementById('lightBtn')
+          if (isDark) {
+            lightBtn.style.display = "block"
+            darkBtn.style.display = "none"
+            localStorage.setItem('preferredTheme', 'dark');
+          } else {
+            lightBtn.style.display = "none"
+            darkBtn.style.display = "block"
+            localStorage.removeItem('preferredTheme');
+          }
+          document.body.classList.toggle("darkmode");
+        }
+      </script>
+    </h1>
+  </div>
+
+  <div class="six columns ml-1">
+    <h1 class="mt-2">
+      秦少卫的博客
+    </h1>
+  </div>
+
+  <div class="twelve columns">
+    <div class="row">
+      <div class="nine columns left">
+        <a href="/">主页</a>
+        
+          
+          <a href="/archives" class="ml">归档</a>
+          
+        
+          
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/3843548383549214" class="ml">掘金</a>
+          
+        
+          
+          <a href="/About" class="ml">简介</a>
+          
+        
+        
+      </div>
+    </div>
+    <hr style="margin-bottom: 2.6rem">
+  </div>
+</div>
+
+        <div class="trans">
+            <h2>React无门槛实现拖拽布局、表单设计器</h2>
+
+  <p>现在有很多优秀的拖拽布局工具，<a target="_blank" rel="noopener" href="http://tools.xiaoyaoji.cn/form/#/">表单设计器</a>，<a target="_blank" rel="noopener" href="http://lowcode.magicalcoder.com/layui">layui拖拽布局</a>, <a target="_blank" rel="noopener" href="https://jaweii.github.io/Vue-Layout/dist/#/">Vue-Layout</a>。</p>
+<p>我们最近也实现了类似的功能，废话不多说，先把预览贴出来（不知道为什么掘金现在图片不支持gif了，还要自己上传到图床）。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/10/20/16de6cc8698acd56?w=1121&h=584&f=gif&s=397631"><br><img src="https://user-gold-cdn.xitu.io/2019/10/20/16de6cd0ee554ebd?w=1121&h=584&f=gif&s=351009"><br><img src="https://user-gold-cdn.xitu.io/2019/10/20/16de6cd95e45b824?w=1121&h=584&f=gif&s=217033"></p>
+<p>在实现这个的功能的过程中，也走了一点弯路，我们内部1.0版本的时候，使用的是<code>sortablejs</code>，由于代码写的比较混乱，拖拽功能经常出现卡死的现象，以为是<code>sortablejs</code>的问题，然后又换成大名鼎鼎的<code>React Dnd</code>，和<code>Redux</code>是同一个作者，但是Dnd并不是太符合我们的需求，拖拽的API确实很强大，但是排序、跨级拖拽等好多功能都要自己手动实现，在实现完跨级拖拽以后，老大让我换成了<code>sortablejs</code>。</p>
+<p>拖拽工具：<a target="_blank" rel="noopener" href="http://sortablejs.github.io/Sortable/">sortablejs</a><br>，<a target="_blank" rel="noopener" href="http://react-dnd.github.io/react-dnd/">React Dnd</a></p>
+<p>我们还是先说下思路，还有我们在1.0里给自己挖的坑，你们也要小心哈😂。</p>
+<p>如果有过树组件开发经验的小伙伴，应该对<strong>递归</strong>很熟悉了，左侧的页面结构要用到，右侧的渲染也要用到，整体来说，左侧的组件树和右侧的画布区，就是两个递归函数。</p>
+<h3 id="页面即数组，组件即对象"><a href="#页面即数组，组件即对象" class="headerlink" title="页面即数组，组件即对象"></a>页面即数组，组件即对象</h3><p>我们要生成页面，肯定不是只看看页面长什么样子，好不好看，而是要把数据保存起来，生成我们想要的格式，首先就要面临的问题是，这个数据应该长什么样子，都有哪些字段，分别干什么用。</p>
+<p>页面即数组很好理解，一个页面上可以有多个组件，而且有顺序，用数组就比较方便了，如果有子元素怎么办，不管vue还是react，UI框里都会有<code>Tree</code>组件，数据格式都是使用<code>children</code>向下嵌套数据组，这点好理解吧？</p>
+<p>举个栗子，iview的tree组件<a target="_blank" rel="noopener" href="https://www.iviewui.com/components/tree">文档</a><br><img src="https://user-gold-cdn.xitu.io/2019/10/20/16de6e99d8026311?w=2116&h=1566&f=png&s=195924"></p>
+<p>子元素和我们有什么关系呢，我们看<a target="_blank" rel="noopener" href="http://tools.xiaoyaoji.cn/form/#/">表单设计器</a>和<a target="_blank" rel="noopener" href="http://lowcode.magicalcoder.com/layui">layui拖拽布局</a>里，都有<strong>容器组件</strong>，什么意思呢，就是可以在这个组件下继续拖拽放入组件，如果数据无限的向下延伸，那就需要<code>children</code>帮忙向下无限嵌套。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/10/20/16de6f06476e553b?w=1332&h=1322&f=png&s=227412"></p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/10/20/16de6f163e826a9f?w=1726&h=1324&f=png&s=187847"></p>
+<p>嵌套的问题解决了，组件怎么渲染呢，我们先不考虑拖拽的问题，单单一个数据对象渲染成组件，怎么实现呢？<br>先大致想一下，我们如果使用<code>Ant Design</code>的组件，我们得知道组件的名称吧？得有自己<code>props</code>吧？<br>暂定两个字段<code>name</code>和<code>attr</code>，包括上面提到的<code>children</code>字段，我们先简单的做个demo，用ant的模板。</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">import</span> React<span class="token punctuation">,</span> <span class="token punctuation">&#123;</span> Component <span class="token punctuation">&#125;</span> <span class="token keyword">from</span> <span class="token string">'react'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">&#123;</span> Rate<span class="token punctuation">,</span>Input<span class="token punctuation">,</span>DatePicker <span class="token punctuation">&#125;</span> <span class="token keyword">from</span> <span class="token string">'antd'</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token punctuation">&#123;</span> MonthPicker<span class="token punctuation">,</span> RangePicker<span class="token punctuation">,</span> WeekPicker <span class="token punctuation">&#125;</span> <span class="token operator">=</span> DatePicker<span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> GlobalComponent <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+    Rate<span class="token punctuation">,</span>
+    Input<span class="token punctuation">,</span>
+    MonthPicker<span class="token punctuation">,</span>
+    RangePicker<span class="token punctuation">,</span>
+    WeekPicker<span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span>
+
+
+<span class="token keyword">class</span> <span class="token class-name">EditPage</span> <span class="token keyword">extends</span> <span class="token class-name">Component</span> <span class="token punctuation">&#123;</span>
+
+    <span class="token function">render</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        
+        <span class="token comment">// 测试数据</span>
+        <span class="token keyword">const</span> Data <span class="token operator">=</span> <span class="token punctuation">[</span>
+            <span class="token punctuation">&#123;</span>
+                name<span class="token operator">:</span> <span class="token string">'Input'</span><span class="token punctuation">,</span>
+                attr<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+                    size<span class="token operator">:</span><span class="token string">'large'</span><span class="token punctuation">,</span>
+                    value<span class="token operator">:</span><span class="token string">'第一个'</span>
+                <span class="token punctuation">&#125;</span>
+            <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+            <span class="token punctuation">&#123;</span>
+                name<span class="token operator">:</span> <span class="token string">'Input'</span><span class="token punctuation">,</span>
+                attr<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+                    size<span class="token operator">:</span><span class="token string">'default'</span><span class="token punctuation">,</span>
+                    value<span class="token operator">:</span><span class="token string">'第二个'</span>
+                <span class="token punctuation">&#125;</span>
+            <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+            <span class="token punctuation">&#123;</span>
+                name<span class="token operator">:</span> <span class="token string">'Input'</span><span class="token punctuation">,</span>
+                attr<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+                    size<span class="token operator">:</span><span class="token string">'small'</span><span class="token punctuation">,</span>
+                    value<span class="token operator">:</span><span class="token string">'第三个'</span>
+                <span class="token punctuation">&#125;</span>
+            <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+            <span class="token punctuation">&#123;</span>
+                name<span class="token operator">:</span> <span class="token string">'Containers'</span><span class="token punctuation">,</span>
+                attr<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+                    style<span class="token operator">:</span><span class="token punctuation">&#123;</span>
+                        border<span class="token operator">:</span><span class="token string">'1px solid red'</span>
+                    <span class="token punctuation">&#125;</span>
+                <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+                children<span class="token operator">:</span><span class="token punctuation">[</span>
+                    <span class="token punctuation">&#123;</span>
+                        name<span class="token operator">:</span> <span class="token string">'Input'</span><span class="token punctuation">,</span>
+                        attr<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+                            size<span class="token operator">:</span><span class="token string">'small'</span><span class="token punctuation">,</span>
+                            value<span class="token operator">:</span><span class="token string">'嵌套的input'</span>
+                        <span class="token punctuation">&#125;</span>
+                    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+                    <span class="token punctuation">&#123;</span>
+                        name<span class="token operator">:</span> <span class="token string">'Rate'</span><span class="token punctuation">,</span>
+                        attr<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+                            size<span class="token operator">:</span><span class="token string">'small'</span><span class="token punctuation">,</span>
+                            value<span class="token operator">:</span><span class="token string">'嵌套的input'</span>
+                        <span class="token punctuation">&#125;</span>
+                    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+                    <span class="token punctuation">&#123;</span>
+                        name<span class="token operator">:</span> <span class="token string">'MonthPicker'</span><span class="token punctuation">,</span>
+                        attr<span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
+                    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+                    <span class="token punctuation">&#123;</span>
+                        name<span class="token operator">:</span> <span class="token string">'RangePicker'</span><span class="token punctuation">,</span>
+                        attr<span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
+                    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+                    <span class="token punctuation">&#123;</span>
+                        name<span class="token operator">:</span> <span class="token string">'WeekPicker'</span><span class="token punctuation">,</span>
+                        attr<span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
+                    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+                <span class="token punctuation">]</span>
+
+            <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+        <span class="token punctuation">]</span><span class="token punctuation">;</span>
+        
+        <span class="token comment">// 递归函数</span>
+        <span class="token keyword">const</span> <span class="token function-variable function">loop</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token parameter">arr</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">(</span>
+            arr<span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span><span class="token parameter">item</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+                <span class="token keyword">if</span><span class="token punctuation">(</span>item<span class="token punctuation">.</span>children<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+                    <span class="token keyword">return</span> <span class="token operator">&lt;</span>div <span class="token punctuation">&#123;</span><span class="token operator">...</span>item<span class="token punctuation">.</span>attr<span class="token punctuation">&#125;</span> <span class="token operator">></span><span class="token punctuation">&#123;</span><span class="token function">loop</span><span class="token punctuation">(</span>item<span class="token punctuation">.</span>children<span class="token punctuation">)</span><span class="token punctuation">&#125;</span><span class="token operator">&lt;</span><span class="token operator">/</span>div<span class="token operator">></span>
+                <span class="token punctuation">&#125;</span>
+                <span class="token keyword">const</span> ComponentInfo <span class="token operator">=</span> GlobalComponent<span class="token punctuation">[</span>item<span class="token punctuation">.</span>name<span class="token punctuation">]</span>
+                <span class="token keyword">return</span> <span class="token operator">&lt;</span>ComponentInfo <span class="token punctuation">&#123;</span><span class="token operator">...</span>item<span class="token punctuation">.</span>attr<span class="token punctuation">&#125;</span> <span class="token operator">/</span><span class="token operator">></span>
+            <span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">return</span> <span class="token punctuation">(</span>
+            <span class="token operator">&lt;</span><span class="token operator">></span>
+                <span class="token punctuation">&#123;</span><span class="token function">loop</span><span class="token punctuation">(</span>Data<span class="token punctuation">)</span><span class="token punctuation">&#125;</span>
+            <span class="token operator">&lt;</span><span class="token operator">/</span><span class="token operator">></span>
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> EditPage<span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>页面已经渲染出来了，怎么样 很简单吧？ 接下来 我们一起来实现拖拽吧</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/10/20/16de756a1de2405f?w=2610&h=850&f=png&s=75190"></p>
+<h3 id="拖拽的实现"><a href="#拖拽的实现" class="headerlink" title="拖拽的实现"></a>拖拽的实现</h3><p>数据格式我们有了，渲染也实现了，剩下的就是拖拽了，我们先了解一下了<a target="_blank" rel="noopener" href="http://sortablejs.github.io/Sortable/">sortablejs</a>这个插件，官方有提供<code>react</code>版的组件<code>react-sortablejs</code>。</p>
+<p>安装依赖，在页面中引入组件，不多说，看<a target="_blank" rel="noopener" href="https://github.com/SortableJS/react-sortablejs">react-sortablejs文档</a>。</p>
+<p>接下来先说一下<code>sortablejs</code><strong>提供给我们什么功能</strong>。</p>
+<ol>
+<li>如果从容器A拖拽到容器B，两个容器<code>group</code>参数的<code>name</code>保持一致才能实现相互拖拽。</li>
+<li>容器是否可移入和移出，是在<code>group</code>中配置<code>pull</code>和<code>put</code>属性。</li>
+<li>容器有两个监听事件，一个是移入的<code>onAdd</code>方法，一个是更新的<code>onUpdate</code>方法</li>
+<li><code>onAdd</code>和<code>onUpdate</code>只能监听到拖拽元素的<code>data-id</code>属性</li>
+</ol>
+<p>我们怎么借助这些功能实现？</p>
+<ol>
+<li>组件列表，就是左侧供我们拖拽的源组件列表，不能移出，并且<code>data-id</code>需要为组件名称，才能告知右侧的容器拖拽进入的是什么组件。</li>
+<li>右侧容器需要嵌套，递归展示，有子元素时要展示容器而不是组件。</li>
+<li>右侧的容器要可移入移出，方便跨容器拖拽。</li>
+<li>为了把新增的组件数据放进右侧对应的位置，右侧容器的<code>data-id</code>修改为下标的路径<code>2-3-2</code>这样的形式，对应根数组的第2个元素的第3个子元素的第2个子元素。</li>
+</ol>
+<p>好了，现在先把供我们拖拽的源组件列表写出来</p>
+<p>然后把右侧的容器改造一下，如果有子元素则展示一个新的容器，并且加上add的监听方法。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/10/20/16de8bd55d219032?w=1046&h=549&f=gif&s=755753"><br>需要注意的是，跨级拖拽的时候触发<code>onAdd</code>，需要判断一下进入的<code>data-id</code>到底是下标还是组件，如果为组件直接添加，如果为下标，则<strong>对比一下新增和删除的路径，先操作靠下方的路径，再操作靠上的路径</strong>。</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">import</span> React<span class="token punctuation">,</span> <span class="token punctuation">&#123;</span> Component <span class="token punctuation">&#125;</span> <span class="token keyword">from</span> <span class="token string">'react'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">&#123;</span> Rate<span class="token punctuation">,</span>Input<span class="token punctuation">,</span>DatePicker<span class="token punctuation">,</span>Tag <span class="token punctuation">&#125;</span> <span class="token keyword">from</span> <span class="token string">'antd'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> Sortable <span class="token keyword">from</span> <span class="token string">'react-sortablejs'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> uniqueId <span class="token keyword">from</span> <span class="token string">'lodash/uniqueId'</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token punctuation">&#123;</span> MonthPicker<span class="token punctuation">,</span> RangePicker<span class="token punctuation">,</span> WeekPicker <span class="token punctuation">&#125;</span> <span class="token operator">=</span> DatePicker<span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">&#123;</span> indexToArray<span class="token punctuation">,</span> getItem<span class="token punctuation">,</span> setInfo<span class="token punctuation">,</span> isPath<span class="token punctuation">,</span> getCloneItem<span class="token punctuation">,</span> itemRemove<span class="token punctuation">,</span> itemAdd <span class="token punctuation">&#125;</span> <span class="token keyword">from</span> <span class="token string">'./utils'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> find <span class="token keyword">from</span> <span class="token string">'find-process'</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> GlobalComponent <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+    Rate<span class="token punctuation">,</span>
+    Input<span class="token punctuation">,</span>
+    MonthPicker<span class="token punctuation">,</span>
+    RangePicker<span class="token punctuation">,</span>
+    WeekPicker<span class="token punctuation">,</span>
+<span class="token punctuation">&#125;</span>
+
+
+<span class="token keyword">const</span> soundData <span class="token operator">=</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">&#123;</span>
+        name<span class="token operator">:</span> <span class="token string">'MonthPicker'</span><span class="token punctuation">,</span>
+        attr<span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#123;</span>
+        name<span class="token operator">:</span> <span class="token string">'RangePicker'</span><span class="token punctuation">,</span>
+        attr<span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#123;</span>
+        name<span class="token operator">:</span> <span class="token string">'WeekPicker'</span><span class="token punctuation">,</span>
+        attr<span class="token operator">:</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#123;</span>
+        name<span class="token operator">:</span> <span class="token string">'Input'</span><span class="token punctuation">,</span>
+        attr<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+            size<span class="token operator">:</span><span class="token string">'large'</span><span class="token punctuation">,</span>
+            value<span class="token operator">:</span><span class="token string">'第一个'</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#123;</span>
+        name<span class="token operator">:</span> <span class="token string">'Containers'</span><span class="token punctuation">,</span>
+        attr<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+            style<span class="token operator">:</span><span class="token punctuation">&#123;</span>
+                border<span class="token operator">:</span><span class="token string">'1px solid red'</span>
+            <span class="token punctuation">&#125;</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">]</span>
+
+<span class="token keyword">class</span> <span class="token class-name">EditPage</span> <span class="token keyword">extends</span> <span class="token class-name">Component</span> <span class="token punctuation">&#123;</span>
+
+    <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter">props</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">super</span><span class="token punctuation">(</span>props<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>state <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+            Data<span class="token operator">:</span><span class="token punctuation">[</span><span class="token punctuation">&#123;</span>
+                name<span class="token operator">:</span> <span class="token string">'Input'</span><span class="token punctuation">,</span>
+                attr<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+                    size<span class="token operator">:</span><span class="token string">'large'</span><span class="token punctuation">,</span>
+                    value<span class="token operator">:</span><span class="token string">'第一个'</span>
+                <span class="token punctuation">&#125;</span> 
+            <span class="token punctuation">&#125;</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+     <span class="token comment">// 拖拽的添加方法</span>
+     <span class="token function-variable function">sortableAdd</span> <span class="token operator">=</span> <span class="token parameter">evt</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+        <span class="token comment">// 组件名或路径</span>
+        <span class="token keyword">const</span> nameOrIndex <span class="token operator">=</span> evt<span class="token punctuation">.</span>clone<span class="token punctuation">.</span><span class="token function">getAttribute</span><span class="token punctuation">(</span><span class="token string">'data-id'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">// 父节点路径</span>
+        <span class="token keyword">const</span> parentPath <span class="token operator">=</span> evt<span class="token punctuation">.</span>path<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">getAttribute</span><span class="token punctuation">(</span><span class="token string">'data-id'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">// 拖拽元素的目标路径</span>
+        <span class="token keyword">const</span> <span class="token punctuation">&#123;</span> newIndex <span class="token punctuation">&#125;</span> <span class="token operator">=</span> evt<span class="token punctuation">;</span>
+        <span class="token comment">// 新路径 为根节点时直接使用index</span>
+        <span class="token keyword">const</span> newPath <span class="token operator">=</span> parentPath <span class="token operator">?</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$&#123;</span>parentPath<span class="token interpolation-punctuation punctuation">&#125;</span></span><span class="token string">-</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$&#123;</span>newIndex<span class="token interpolation-punctuation punctuation">&#125;</span></span><span class="token template-punctuation string">`</span></span> <span class="token operator">:</span> newIndex<span class="token punctuation">;</span>
+        <span class="token comment">// 判断是否为路径 路径执行移动，非路径为新增</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isPath</span><span class="token punctuation">(</span>nameOrIndex<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            <span class="token comment">// 旧的路径index</span>
+            <span class="token keyword">const</span> oldIndex <span class="token operator">=</span> nameOrIndex<span class="token punctuation">;</span>
+            <span class="token comment">// 克隆要移动的元素</span>
+            <span class="token keyword">const</span> dragItem <span class="token operator">=</span> <span class="token function">getCloneItem</span><span class="token punctuation">(</span>oldIndex<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>Data<span class="token punctuation">)</span>
+            <span class="token comment">// 比较路径的上下位置 先执行靠下的数据 再执行考上数据</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">indexToArray</span><span class="token punctuation">(</span>oldIndex<span class="token punctuation">)</span> <span class="token operator">></span> <span class="token function">indexToArray</span><span class="token punctuation">(</span>newPath<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+                <span class="token comment">// 删除元素 获得新数据</span>
+                <span class="token keyword">let</span> newTreeData <span class="token operator">=</span> <span class="token function">itemRemove</span><span class="token punctuation">(</span>oldIndex<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>Data<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token comment">// 添加拖拽元素</span>
+                newTreeData <span class="token operator">=</span> <span class="token function">itemAdd</span><span class="token punctuation">(</span>newPath<span class="token punctuation">,</span> newTreeData<span class="token punctuation">,</span> dragItem<span class="token punctuation">)</span>
+                <span class="token comment">// 更新视图</span>
+                <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setState</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>Data<span class="token operator">:</span>newTreeData<span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+                <span class="token keyword">return</span>
+            <span class="token punctuation">&#125;</span>
+            <span class="token comment">// 添加拖拽元素</span>
+            <span class="token keyword">let</span> newData <span class="token operator">=</span> <span class="token function">itemAdd</span><span class="token punctuation">(</span>newPath<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>Data<span class="token punctuation">,</span> dragItem<span class="token punctuation">)</span>
+            <span class="token comment">// 删除元素 获得新数据</span>
+            newData <span class="token operator">=</span> <span class="token function">itemRemove</span><span class="token punctuation">(</span>oldIndex<span class="token punctuation">,</span> newData<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setState</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>Data<span class="token operator">:</span>newData<span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+            <span class="token keyword">return</span>
+        <span class="token punctuation">&#125;</span>
+
+        <span class="token comment">// 新增流程 创建元素 => 插入元素 => 更新视图</span>
+        <span class="token keyword">const</span> id <span class="token operator">=</span> nameOrIndex
+        
+        <span class="token keyword">const</span> newItem <span class="token operator">=</span> _<span class="token punctuation">.</span><span class="token function">cloneDeep</span><span class="token punctuation">(</span>soundData<span class="token punctuation">.</span><span class="token function">find</span><span class="token punctuation">(</span><span class="token parameter">item</span> <span class="token operator">=></span> <span class="token punctuation">(</span>item<span class="token punctuation">.</span>name <span class="token operator">===</span> id<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        
+        <span class="token comment">// 为容器或者弹框时增加子元素</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span> newItem<span class="token punctuation">.</span>name <span class="token operator">===</span> <span class="token string">'Containers'</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+            <span class="token keyword">const</span> ComponentsInfo <span class="token operator">=</span> _<span class="token punctuation">.</span><span class="token function">cloneDeep</span><span class="token punctuation">(</span>GlobalComponent<span class="token punctuation">[</span>newItem<span class="token punctuation">.</span>name<span class="token punctuation">]</span><span class="token punctuation">)</span>
+            <span class="token comment">// 判断是否包含默认数据</span>
+            newItem<span class="token punctuation">.</span>children <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+        <span class="token punctuation">&#125;</span>
+        
+        <span class="token keyword">let</span> Data <span class="token operator">=</span> <span class="token function">itemAdd</span><span class="token punctuation">(</span>newPath<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>Data<span class="token punctuation">,</span> newItem<span class="token punctuation">)</span>
+        
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setState</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>Data<span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token function">render</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        
+        <span class="token comment">// 递归函数</span>
+        <span class="token keyword">const</span> <span class="token function-variable function">loop</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token parameter">arr<span class="token punctuation">,</span>index</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">(</span>
+            arr<span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">item<span class="token punctuation">,</span>i</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+                <span class="token keyword">const</span> indexs <span class="token operator">=</span> index <span class="token operator">===</span> <span class="token string">''</span> <span class="token operator">?</span> <span class="token function">String</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span> <span class="token operator">:</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$&#123;</span>index<span class="token interpolation-punctuation punctuation">&#125;</span></span><span class="token string">-</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$&#123;</span>i<span class="token interpolation-punctuation punctuation">&#125;</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span>
+                <span class="token keyword">if</span><span class="token punctuation">(</span>item<span class="token punctuation">.</span>children<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+                    <span class="token keyword">return</span> <span class="token operator">&lt;</span>div <span class="token punctuation">&#123;</span><span class="token operator">...</span>item<span class="token punctuation">.</span>attr<span class="token punctuation">&#125;</span> 
+                        data<span class="token operator">-</span>id<span class="token operator">=</span><span class="token punctuation">&#123;</span>indexs<span class="token punctuation">&#125;</span>
+                    <span class="token operator">></span>
+                        <span class="token operator">&lt;</span>Sortable
+                            key<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token function">uniqueId</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span>
+                            style<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>
+                                minHeight<span class="token operator">:</span><span class="token number">100</span><span class="token punctuation">,</span>
+                                margin<span class="token operator">:</span><span class="token number">10</span><span class="token punctuation">,</span>
+                            <span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span>
+                            ref<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token parameter">c</span> <span class="token operator">=></span> c <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>sortable <span class="token operator">=</span> c<span class="token punctuation">.</span>sortable<span class="token punctuation">)</span><span class="token punctuation">&#125;</span>
+                            options<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>
+                                <span class="token operator">...</span>sortableOption<span class="token punctuation">,</span>
+                                <span class="token comment">// onUpdate: evt => (this.sortableUpdate(evt)),</span>
+                                <span class="token function-variable function">onAdd</span><span class="token operator">:</span> <span class="token parameter">evt</span> <span class="token operator">=></span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">sortableAdd</span><span class="token punctuation">(</span>evt<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+                            <span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span>
+                        <span class="token operator">></span>
+                            <span class="token punctuation">&#123;</span><span class="token function">loop</span><span class="token punctuation">(</span>item<span class="token punctuation">.</span>children<span class="token punctuation">,</span>indexs<span class="token punctuation">)</span><span class="token punctuation">&#125;</span>
+                        <span class="token operator">&lt;</span><span class="token operator">/</span>Sortable<span class="token operator">></span>
+                    <span class="token operator">&lt;</span><span class="token operator">/</span>div<span class="token operator">></span>
+                <span class="token punctuation">&#125;</span>
+                <span class="token keyword">const</span> ComponentInfo <span class="token operator">=</span> GlobalComponent<span class="token punctuation">[</span>item<span class="token punctuation">.</span>name<span class="token punctuation">]</span>
+                <span class="token keyword">return</span> <span class="token operator">&lt;</span>div data<span class="token operator">-</span>id<span class="token operator">=</span><span class="token punctuation">&#123;</span>indexs<span class="token punctuation">&#125;</span><span class="token operator">></span><span class="token operator">&lt;</span>ComponentInfo <span class="token punctuation">&#123;</span><span class="token operator">...</span>item<span class="token punctuation">.</span>attr<span class="token punctuation">&#125;</span> <span class="token operator">/</span><span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>div<span class="token operator">></span>
+            <span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+        <span class="token punctuation">)</span>
+
+        <span class="token keyword">const</span> sortableOption <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+            animation<span class="token operator">:</span> <span class="token number">150</span><span class="token punctuation">,</span>
+            fallbackOnBody<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+            swapThreshold<span class="token operator">:</span> <span class="token number">0.65</span><span class="token punctuation">,</span>
+            group<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+                name<span class="token operator">:</span> <span class="token string">'formItem'</span><span class="token punctuation">,</span>
+                pull<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+                put<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+            <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+        <span class="token punctuation">&#125;</span>
+
+        <span class="token keyword">return</span> <span class="token punctuation">(</span>
+            <span class="token operator">&lt;</span><span class="token operator">></span>  
+                <span class="token operator">&lt;</span>h2<span class="token operator">></span>组件列表<span class="token operator">&lt;</span><span class="token operator">/</span>h2<span class="token operator">></span>
+                <span class="token operator">&lt;</span>Sortable
+                    options <span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>
+                            group<span class="token operator">:</span><span class="token punctuation">&#123;</span>
+                                name<span class="token operator">:</span> <span class="token string">'formItem'</span><span class="token punctuation">,</span>
+                                pull<span class="token operator">:</span> <span class="token string">'clone'</span><span class="token punctuation">,</span>
+                                put<span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+                            <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+                            sort<span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+                        <span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span>
+                <span class="token operator">></span>
+                    <span class="token punctuation">&#123;</span>
+                        soundData<span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span><span class="token parameter">item</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+                            <span class="token keyword">return</span> <span class="token operator">&lt;</span>div data<span class="token operator">-</span>id<span class="token operator">=</span><span class="token punctuation">&#123;</span>item<span class="token punctuation">.</span>name<span class="token punctuation">&#125;</span><span class="token operator">></span><span class="token operator">&lt;</span>Tag<span class="token operator">></span><span class="token punctuation">&#123;</span>item<span class="token punctuation">.</span>name<span class="token punctuation">&#125;</span><span class="token operator">&lt;</span><span class="token operator">/</span>Tag<span class="token operator">></span><span class="token operator">&lt;</span><span class="token operator">/</span>div<span class="token operator">></span>
+                        <span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+                    <span class="token punctuation">&#125;</span>
+                <span class="token operator">&lt;</span><span class="token operator">/</span>Sortable<span class="token operator">></span>
+                <span class="token operator">&lt;</span>h2<span class="token operator">></span>容器<span class="token operator">&lt;</span><span class="token operator">/</span>h2<span class="token operator">></span>
+                <span class="token operator">&lt;</span>Sortable
+                    ref<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token parameter">c</span> <span class="token operator">=></span> c <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>sortable <span class="token operator">=</span> c<span class="token punctuation">.</span>sortable<span class="token punctuation">)</span><span class="token punctuation">&#125;</span>
+                    options<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#123;</span>
+                        <span class="token operator">...</span>sortableOption<span class="token punctuation">,</span>
+                        <span class="token comment">// onUpdate: evt => (this.sortableUpdate(evt)),</span>
+                        <span class="token function-variable function">onAdd</span><span class="token operator">:</span> <span class="token parameter">evt</span> <span class="token operator">=></span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">sortableAdd</span><span class="token punctuation">(</span>evt<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+                    <span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span>
+                    key<span class="token operator">=</span><span class="token punctuation">&#123;</span><span class="token function">uniqueId</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span>
+                <span class="token operator">></span>
+                    <span class="token punctuation">&#123;</span><span class="token function">loop</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>Data<span class="token punctuation">,</span><span class="token string">''</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span>
+                <span class="token operator">&lt;</span><span class="token operator">/</span>Sortable<span class="token operator">></span>
+            <span class="token operator">&lt;</span><span class="token operator">/</span><span class="token operator">></span>
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> EditPage<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>现在跨级操作和新增已经完成了，接下来我们补充一下同级交换位置的功能，我们用了<code>immutability-helper</code>这个工具函数，具体的自己看文档吧，只是用到了数组换位。</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">import</span> update <span class="token keyword">from</span> <span class="token string">'immutability-helper'</span>
+
+<span class="token comment">// 拖拽的排序方法</span>
+<span class="token function-variable function">sortableUpdate</span> <span class="token operator">=</span> <span class="token parameter">evt</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 交换数组</span>
+    <span class="token keyword">const</span> <span class="token punctuation">&#123;</span> newIndex<span class="token punctuation">,</span> oldIndex <span class="token punctuation">&#125;</span> <span class="token operator">=</span> evt<span class="token punctuation">;</span>
+
+    <span class="token comment">// 父节点路径</span>
+    <span class="token keyword">const</span> parentPath <span class="token operator">=</span> evt<span class="token punctuation">.</span>path<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">getAttribute</span><span class="token punctuation">(</span><span class="token string">'data-id'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 父元素 根节点时直接调用data</span>
+    <span class="token keyword">let</span> parent <span class="token operator">=</span> parentPath <span class="token operator">?</span> <span class="token function">getItem</span><span class="token punctuation">(</span>parentPath<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>Data<span class="token punctuation">)</span> <span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>Data<span class="token punctuation">;</span>
+    <span class="token comment">// 当前拖拽元素</span>
+    <span class="token keyword">const</span> dragItem <span class="token operator">=</span> parent<span class="token punctuation">[</span>oldIndex<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token comment">// 更新后的父节点</span>
+    parent <span class="token operator">=</span> <span class="token function">update</span><span class="token punctuation">(</span>parent<span class="token punctuation">,</span> <span class="token punctuation">&#123;</span>
+        $splice<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">[</span>oldIndex<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token punctuation">[</span>newIndex<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> dragItem<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 最新的数据 根节点时直接调用data</span>
+    <span class="token keyword">const</span> Data <span class="token operator">=</span> parentPath <span class="token operator">?</span> <span class="token function">setInfo</span><span class="token punctuation">(</span>parentPath<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>state<span class="token punctuation">.</span>Data<span class="token punctuation">,</span> parent<span class="token punctuation">)</span> <span class="token operator">:</span> parent
+    <span class="token comment">// 调用父组件更新方法</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setState</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>Data<span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>现在跨级和同级的排序的功能都已经完成了，我们看看预览图吧。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2019/10/20/16de8cab1fc829e4?w=1046&h=549&f=gif&s=805784"></p>
+<p>在<code>onUpdate</code>和<code>onAdd</code>的函数中，自己封装了一些根据下标操作数组的方法，也是按照函数式的方式，每个函数返回新的结果，写的不是特别好，多多见谅哈，剩下的删除、选中啦，根据自己的需求增加功能就可以了，我把源码放在了github上，有需要的拿去吧，码字码到手酸，吃饭去了😂。</p>
+<p><a target="_blank" rel="noopener" href="https://nihaojob.github.io/DragLayout/">演示地址</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/nihaojob/DragLayout">源码：https://github.com/nihaojob/DragLayout</a></p>
+
+  <p> — 2021年7月4日</p>
+  
+
+
+          <div class="row mt-2">
+  
+    <div class="eight columns">
+      <p id="madewith" style="color: #c7c7c7;">静水流深，闻喧享静。空山鸣响，见惯司空。
+        
+    </div>
+
+    <!-- Sepcial thanks to https://simpleicons.org/ for the icons -->
+    <div class="four columns mb-3 posisi" >
+      
+      <a class="ml-0 footer-link icon" href="https://github.com/nihaojob" target="_blank" style="text-decoration: none" rel="noreferrer" aria-label="GitHub">
+        <svg class="github svg-hov" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      </a>
+      
+
+      
+
+      
+
+      
+
+      
+
+    </div>
+  
+</div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <script src="/js/nanobar.min.js"></script>
+  <script>
+    var options = {
+      classname: 'nanobar',
+      id: 'myNanobar'
+    };
+    var nanobar = new Nanobar(options);
+    nanobar.go(30);
+    nanobar.go(76);
+    nanobar.go(100);
+  </script>
+
+</body>
+
+</html>

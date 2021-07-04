@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <!-- Minima -->
+  <!-- Hexo theme created by @adisaktijrs -->
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+
+  
+  <title>Node.js开发实践，前端工程师的MVP利器</title>
+  
+  <link rel="canonical" href="http://example.com/2021/07/04/node-mvp/">
+  
+  <meta name="description" content="什么是MVP，来自伟大的百科:  Minimum Viable Product –最简化可实行产品。 是指以最低成本尽可能展现核心概念的产品策略，即是指用最快、最简明的方式建立一个可用的产品原型，这个原型要表达出你产品最终想要的效果，然后通过迭代来完善细节。该术语由弗兰克·罗宾逊和埃里克·里斯推广于">
+  
+  
+  <meta name="author" content="nihaojob@163.com">
+  
+  <meta property="og:image" content="http://example.comundefined">
+  
+  <meta property="og:site_name" content="秦少卫的博客" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Node.js开发实践，前端工程师的MVP利器" />
+  
+  <meta property="og:description" content="什么是MVP，来自伟大的百科:  Minimum Viable Product –最简化可实行产品。 是指以最低成本尽可能展现核心概念的产品策略，即是指用最快、最简明的方式建立一个可用的产品原型，这个原型要表达出你产品最终想要的效果，然后通过迭代来完善细节。该术语由弗兰克·罗宾逊和埃里克·里斯推广于">
+  
+  <meta property="og:url" content="http://example.com/2021/07/04/node-mvp/" />
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Node.js开发实践，前端工程师的MVP利器">
+  
+  <meta name="twitter:description" content="什么是MVP，来自伟大的百科:  Minimum Viable Product –最简化可实行产品。 是指以最低成本尽可能展现核心概念的产品策略，即是指用最快、最简明的方式建立一个可用的产品原型，这个原型要表达出你产品最终想要的效果，然后通过迭代来完善细节。该术语由弗兰克·罗宾逊和埃里克·里斯推广于">
+  
+  
+  <meta name="twitter:image" content="http://example.comundefined">
+  
+  <meta name="twitter:url" content="http://example.com/2021/07/04/node-mvp/" />
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Preload fonts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="preload" href="../fonts/dm-serif-display-v4-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/inter-v2-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+<link rel="stylesheet" href="/css/normalize.css">
+
+  
+<link rel="stylesheet" href="/css/skeleton.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+<link rel="stylesheet" href="/css/prism-dark.css">
+
+  
+<link rel="stylesheet" href="/css/prism-line-numbers.css">
+
+  <!-- User css -->
+  
+  
+<link rel="stylesheet" href="/css/user.css">
+
+  
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+  <!-- Custom Theme Color Style
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <style>
+  a:not(.icon) {
+    text-decoration-color: #0FA0CE;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 50%,
+      #0FA0CE 50%
+    );
+  }
+  blockquote {
+    border-left: 8px solid #0FA0CE;
+  }
+  .nanobar .bar {
+    background: #0FA0CE;
+  }
+  .button.button-primary:hover,
+  button.button-primary:hover,
+  input[type="submit"].button-primary:hover,
+  input[type="reset"].button-primary:hover,
+  input[type="button"].button-primary:hover,
+  .button.button-primary:focus,
+  button.button-primary:focus,
+  input[type="submit"].button-primary:focus,
+  input[type="reset"].button-primary:focus,
+  input[type="button"].button-primary:focus {
+    background-color: #0FA0CE;
+    border-color: #0FA0CE;
+  }
+  input[type="email"]:focus,
+  input[type="number"]:focus,
+  input[type="search"]:focus,
+  input[type="text"]:focus,
+  input[type="tel"]:focus,
+  input[type="url"]:focus,
+  input[type="password"]:focus,
+  textarea:focus,
+  select:focus {
+    border: 1px solid #0FA0CE;
+  }
+</style>
+
+  <!-- Google Analytics (With Privacy Settings On)
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div>
+
+        <div class="row">
+  <div class="two columns" style="max-width: 50px">
+    <h1 class="mt-2 mode">
+      <div onclick=setDarkMode(true) id="darkBtn">🌑</div>
+      <div onclick=setDarkMode(false) id="lightBtn" class=hidden>☀️</div>
+      <script >
+        if (localStorage.getItem('preferredTheme') == 'dark') {
+          setDarkMode(true)
+        }
+        function setDarkMode(isDark) {
+          var darkBtn = document.getElementById('darkBtn')
+          var lightBtn = document.getElementById('lightBtn')
+          if (isDark) {
+            lightBtn.style.display = "block"
+            darkBtn.style.display = "none"
+            localStorage.setItem('preferredTheme', 'dark');
+          } else {
+            lightBtn.style.display = "none"
+            darkBtn.style.display = "block"
+            localStorage.removeItem('preferredTheme');
+          }
+          document.body.classList.toggle("darkmode");
+        }
+      </script>
+    </h1>
+  </div>
+
+  <div class="six columns ml-1">
+    <h1 class="mt-2">
+      秦少卫的博客
+    </h1>
+  </div>
+
+  <div class="twelve columns">
+    <div class="row">
+      <div class="nine columns left">
+        <a href="/">主页</a>
+        
+          
+          <a href="/archives" class="ml">归档</a>
+          
+        
+          
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/3843548383549214" class="ml">掘金</a>
+          
+        
+          
+          <a href="/About" class="ml">简介</a>
+          
+        
+        
+      </div>
+    </div>
+    <hr style="margin-bottom: 2.6rem">
+  </div>
+</div>
+
+        <div class="trans">
+            <h2>Node.js开发实践，前端工程师的MVP利器</h2>
+
+  <p>什么是MVP，来自伟大的百科:</p>
+<blockquote>
+<p><strong>Minimum Viable Product –最简化可实行产品</strong>。</p>
+<p>是指<strong>以最低成本尽可能展现核心概念的产品策略，即是指用最快、最简明的方式建立一个可用的产品原型</strong>，这个原型要表达出你产品最终想要的效果，然后通过迭代来完善细节。该术语由弗兰克·罗宾逊和埃里克·里斯推广于Web应用程序 ，它也可能涉及到进行市场前手的分析。</p>
+</blockquote>
+<h3 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h3><p>Node是前端工程师的贵人，拓宽了前端工程师的能力边界，对比前几年用<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/Adobe%20Dreamweaver/10015800?fromtitle=DREAMWEAVER&fromid=216984">Dreamweaver</a>写table页面的我来说，感受到的变化是日新月异；前端搞搞工程化和框架什么的也就算了，竟然连编辑器都自己搞🤔，<strong>js你说你是不是有点过分了？</strong></p>
+<p>当然，这个过分的js帮助了我很多，从被后端大佬揪着耳朵按到工位上温声细语的说：“<strong>我套完页面样式乱了，帮我调下样式</strong>”，演变成大佬气冲冲的跑到我工位慈眉善目的拍着桌子说：“<strong>TM接口参数传错了</strong>”。</p>
+<p>感谢Node吧，至少我可以在自己的工位上改自己写的Bug了🤓。</p>
+<p>言归正传，再这么贫真就写不下去代码了，随着Node能力的发展，我自己感觉出来自己有点飘了，因为有用Kindle看书的陋习，一直觉的市面上所有的kindle笔记软件都是垃圾🤥，于是自己写了一个满意的垃圾；这都不算啥，我居然因为要减肥，就写了个体重记录小程序，上线以后我冲着镜子里浑身赘肉的自己喊：“<strong>以为自己就是Node吗？过分</strong>”🤧。</p>
+<p>体重记录小程序的故事并没有突兀的结束，有些用户反馈有bug，我借口taro更新太快项目跑不起来了，而且腾讯云函数我用的很不方便，于是很不负责的停更了；在年后疫情期间，因为实在太闲就打开了后台留言，看到有一个<strong>莫名其妙的留言说寻求合作</strong>🤷‍♂️。</p>
+<p>我忐忑的拨通了电话，在说明了我是小程序的开发者以后，这个人上来就开始说瞎话：“你这个小程序太好了”🤦‍♂️，他阐述了一下自己的经历，是一位开了8年健身房的教练，后来混不下去把健身房关了，做在线减脂指导，竟然收入还不错，真是造化弄人🤪，<strong>他咨询我可以一起做一个减脂管理系统吗？不要钱那种，我恬不知耻的说：“好呀”</strong>。</p>
+<p>不久我们见面了，约在北京东五环外的常营龙湖·长楹天街，他问我可以吃川菜吗？我说可以，于是我们找了一家老屋川菜馆，坐在我面前的这个人因为吃了一口自己点的辣子鸡，然后拿着纸巾一把鼻涕一把泪的忏悔自己是个假重庆人🤦‍♂️，我羞涩的吐掉了口中的辣椒，一起构想了我们小程序的未来，<strong>现在回想起自己的高谈阔论，都有些不好意思</strong>😌。</p>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><p>上边的段子根据个人情况改编，纯属娱乐，如果没有Node的开发能力，别人可能会安慰我：<strong>“你还是去写个页面把”</strong>，😭 苦涩的泪水从眼眶涌出。</p>
+<p>简单介绍了下最近折腾的3个项目的由来，从第一个体重记录小程序，到Kindle笔记工具，再到现在的一套小程序 + 后台，作为一个前端程序员独立作出一套可以跑起来的小系统还是比较有成就感的，虽然可能会被吐槽：<strong>不就是增删改查吗？</strong> 但是不用担心被吐槽：<strong>又没写过增删改查懂个屁？😝</strong></p>
+<p>下边内容介绍了3个项目的积累，重点贴一下第三个项目Node用到的代码。<strong>共同交流，恳请斧正</strong>。</p>
+<h3 id="21天体重记录小程序"><a href="#21天体重记录小程序" class="headerlink" title="21天体重记录小程序"></a>21天体重记录小程序</h3><p>累计7千用户和每天不超过20个活跃用户的数据，还有3篇实践笔记。<br><strong>小程序提供的Node云函数 + 数据库，可以不花一毛钱就能跑起来自己的小程序</strong>，最早是原生写法，后来切换到<code>Taro React</code>语法，效率提高很多，对小程序登录流程、云开发有了一些经验积累，也意识到自己对表结构设计的欠缺。</p>
+<p>奇怪的是竟然累计了7千用户，用户从哪来的呢，难道是因为名字起的好吗？🤔后续准备再更新探索下。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/699419ab5d774792932fff67a6c6b3b2~tplv-k3u1fbpfcp-watermark.image"></p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b977eb4d796a482b9034975fbdd03634~tplv-k3u1fbpfcp-watermark.image"></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903894816915463">【小程序 + 云开发】体重记录小程序 上手笔记</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903896943427597">【小程序 + 云开发 】 随机读取数据并生成分享图片 上手笔记</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903918896414727">【小程序 + 云开发】体重排行榜 上手笔记</a></li>
+</ul>
+<h3 id="kindle-笔记整理工具"><a href="#kindle-笔记整理工具" class="headerlink" title="kindle 笔记整理工具"></a>kindle 笔记整理工具</h3><p>最早是在本地开发，开发了用户注册、密码找回、书籍管理、笔记管理的功能，然后买服务器部署到线上。</p>
+<p>前端使用的 <code>Ant Pro</code>，因为引入了<code>Echarts</code>，没有做按需引入，所以第一次进入比较慢，目前只有自己用，就没优化。</p>
+<p>整套流程跑起来以后，用着自己做的小工具觉得还挺香，也有信心做一些更大的挑战了。</p>
+<p>地址：<a target="_blank" rel="noopener" href="http://nihaojob.com/">http://nihaojob.com/</a></p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3f1e2d2d174a4ea4a855eb77275ac6f1~tplv-k3u1fbpfcp-watermark.image"><br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7f71ee9beadf40c1a1b988176fdfdb6a~tplv-k3u1fbpfcp-watermark.image"><br><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7da7d10e790f4e9783d35e145e1016e9~tplv-k3u1fbpfcp-watermark.image"></p>
+<h3 id="减脂管理系统开发"><a href="#减脂管理系统开发" class="headerlink" title="减脂管理系统开发"></a>减脂管理系统开发</h3><p>终于到今天的主题了，先说下应用场景，学员在报名减脂教练的课程后，教练需要先了解学员日常饮食、睡眠、运动等生活习惯，然后根据学员状况定制运动计划和饮食方案，以及日常的运营如对学员的饮食和运动的打卡审核、积分减重排行榜、知识库等。</p>
+<p><strong>主要的6个功能：</strong></p>
+<ol>
+<li>教练账号管理</li>
+<li>问卷收集</li>
+<li>方案下发</li>
+<li>打卡审核</li>
+<li>知识管理</li>
+<li>积分、减重排行榜</li>
+</ol>
+<p><strong>后台预览：</strong><br><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0262dd330c6640c485721bf0fcaf4c41~tplv-k3u1fbpfcp-watermark.image"><br><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7561f7a05aa34daf87e27cdb84a0488e~tplv-k3u1fbpfcp-watermark.image"><br><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7aec2460b51b48398186b66ca71178d0~tplv-k3u1fbpfcp-watermark.image"></p>
+<p>小程序预览：<br><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7e9148c286444be3a845334a05d352f5~tplv-k3u1fbpfcp-watermark.image"><br><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/35e30326f1564f5393f98ff2065f5ed4~tplv-k3u1fbpfcp-watermark.image"></p>
+<h3 id="知识点"><a href="#知识点" class="headerlink" title="知识点"></a>知识点</h3><h4 id="服务器-域名-备案"><a href="#服务器-域名-备案" class="headerlink" title="服务器 域名 备案"></a>服务器 域名 备案</h4><p>我是从滴滴云上买的服务器，一年才几百块，域名是之前在腾讯买的<code>nihaojob.com</code>，<br>备案过程中滴滴说有政策调整，花了20多天的时间，备案建议提前做准备，备案期间可以把Nginx + Node + Mongodb环境搭建起来。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/36897f6db6244568bd5eec75a1ea6ab2~tplv-k3u1fbpfcp-watermark.image"></p>
+<h4 id="HTTPS证书申请与Nginx配置"><a href="#HTTPS证书申请与Nginx配置" class="headerlink" title="HTTPS证书申请与Nginx配置"></a>HTTPS证书申请与Nginx配置</h4><p>微信小程序的开发域名必须是<code>HTTPS</code>，滴滴云有免费的证书。<br><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/442186f0063f46aaa006b917567e45ac~tplv-k3u1fbpfcp-watermark.image"><br>证书申请后需要在域名解析汇总增加TXT记录，不懂就问滴滴云客服，服务很nice。<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b72cbd8c9a97425a9ec9f28a272f1485~tplv-k3u1fbpfcp-watermark.image"><br>证书申请成功后，把证书上传到服务器，在Nginx的<code>/etc/nginx/conf.d</code>目录下，<code>https.conf</code>文件中<code>ssl_certificate</code>、<code>ssl_certificate_key</code>配置证书路径。</p>
+<pre class="line-numbers language-NGINX" data-language="NGINX"><code class="language-NGINX">server &#123;
+  listen    443 ssl;
+  server_name  api.nihaojob.com;
+  ssl_session_timeout 5m;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2; #按照这个协议配置
+  ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;#按照这个套件配置
+  ssl_prefer_server_ciphers on;
+  ssl_certificate &#x2F;root&#x2F;sslcert&#x2F;cert.crt;
+  ssl_certificate_key &#x2F;root&#x2F;sslcert&#x2F;private.key;
+  location &#x2F; &#123;
+      alias &#x2F;root&#x2F;coach&#x2F;coach-fe&#x2F;dist&#x2F;;
+  &#125;
+  location &#x2F;prod-api&#x2F; &#123;
+     proxy_pass http:&#x2F;&#x2F;127.0.0.1:3000&#x2F;;
+  &#125;
+ &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h4 id="跨域设置"><a href="#跨域设置" class="headerlink" title="跨域设置"></a>跨域设置</h4><p>这里设置了跨域请求头，因为<code>Origin</code>是根据入参来的，很容易造成<code>CROS</code>攻击，对安全系数有要求的系统还是用别的方案吧，也可以使用<code>express</code>推荐的<code>cors</code>中间件。</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">app<span class="token punctuation">.</span><span class="token function">all</span><span class="token punctuation">(</span><span class="token string">'*'</span><span class="token punctuation">,</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">req<span class="token punctuation">,</span> res<span class="token punctuation">,</span> next</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+  res<span class="token punctuation">.</span><span class="token function">header</span><span class="token punctuation">(</span><span class="token string">"Access-Control-Allow-Origin"</span><span class="token punctuation">,</span> req<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>origin<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  res<span class="token punctuation">.</span><span class="token function">header</span><span class="token punctuation">(</span><span class="token string">'Access-Control-Allow-Headers'</span><span class="token punctuation">,</span> <span class="token string">'Origin, X-Requested-With, Content-Type, Accept, token'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  res<span class="token punctuation">.</span><span class="token function">header</span><span class="token punctuation">(</span><span class="token string">"Access-Control-Allow-Methods"</span><span class="token punctuation">,</span> <span class="token string">"PUT,POST,GET,DELETE,OPTIONS"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  res<span class="token punctuation">.</span><span class="token function">header</span><span class="token punctuation">(</span><span class="token string">"Access-Control-Allow-Credentials"</span><span class="token punctuation">,</span> <span class="token string">"true"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  res<span class="token punctuation">.</span><span class="token function">header</span><span class="token punctuation">(</span><span class="token string">"Content-Type"</span><span class="token punctuation">,</span> <span class="token string">"application/json;charset=utf-8"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>req<span class="token punctuation">.</span>method <span class="token operator">==</span> <span class="token string">'OPTIONS'</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token number">200</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">/*让options请求快速返回*/</span>
+  <span class="token punctuation">&#125;</span>
+  <span class="token keyword">else</span> <span class="token punctuation">&#123;</span>
+    <span class="token function">next</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h4 id="express-jwt使用"><a href="#express-jwt使用" class="headerlink" title="express jwt使用"></a>express jwt使用</h4><p>前端在登录时根据用户<code>id</code>生成一个<code>Token</code>发给前端，前端之后的所有请求都携带这个<code>Token</code>，后端根据<code>Token</code>解开后的用户id来进行数据操作。</p>
+<p>利用<code>jsonwebtoken</code>生成<code>Token</code>，<code>express-jwt</code>进行校验和非必需登录接口检查。</p>
+<p>个人认为开发同学都应该深挖一下无状态<code>Token</code>机制与有状态<code>session</code>机制的知识点。</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">//引入</span>
+<span class="token keyword">const</span> jwt <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'jsonwebtoken'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> expressJwt <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'express-jwt'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">//定义签名字符串</span>
+<span class="token keyword">const</span> secret <span class="token operator">=</span> <span class="token string">'anyThingString'</span><span class="token punctuation">;</span>
+
+<span class="token comment">//使用中间件验证token合法性</span>
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token function">expressJwt</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>
+  secret<span class="token operator">:</span> secret<span class="token punctuation">,</span>
+  <span class="token function-variable function">getToken</span><span class="token operator">:</span> <span class="token keyword">function</span> <span class="token function">fromHeaderOrQuerystring</span><span class="token punctuation">(</span><span class="token parameter">req</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>req<span class="token punctuation">.</span>cookies <span class="token operator">&amp;&amp;</span> req<span class="token punctuation">.</span>cookies<span class="token punctuation">.</span>token <span class="token operator">||</span> req<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>token<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span> <span class="token comment">// 使用query.token</span>
+      <span class="token keyword">return</span> req<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>token<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">unless</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>
+  path<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">'/login'</span><span class="token punctuation">,</span><span class="token string">'/users/register'</span><span class="token punctuation">,</span> <span class="token string">'/students/login'</span><span class="token punctuation">,</span> <span class="token punctuation">]</span>  <span class="token comment">//除了这些地址，其他的URL都需要验证</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">//拦截器</span>
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">err<span class="token punctuation">,</span> req<span class="token punctuation">,</span> res<span class="token punctuation">,</span> next</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+  <span class="token comment">//当token验证失败时会抛出如下错误</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>err<span class="token punctuation">.</span>name <span class="token operator">===</span> <span class="token string">'UnauthorizedError'</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">//这个需要根据自己的业务逻辑来处理（ 具体的err值 请看下面）</span>
+    res<span class="token punctuation">.</span><span class="token function">status</span><span class="token punctuation">(</span><span class="token number">401</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span> code<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span> msg<span class="token operator">:</span> <span class="token string">'未登录'</span><span class="token punctuation">,</span> status<span class="token operator">:</span> <span class="token number">41002</span> <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 解析token中间件 后续所有接口可直接使用req.tokenDecode获取参数</span>
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">req<span class="token punctuation">,</span> res<span class="token punctuation">,</span> next</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+  <span class="token comment">// 获取token</span>
+  <span class="token keyword">let</span> token <span class="token operator">=</span> req<span class="token punctuation">.</span>cookies<span class="token punctuation">.</span>token <span class="token operator">||</span> req<span class="token punctuation">.</span>headers<span class="token punctuation">.</span>token<span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>token<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">let</span> decoded <span class="token operator">=</span> jwt<span class="token punctuation">.</span><span class="token function">decode</span><span class="token punctuation">(</span>token<span class="token punctuation">,</span> secret<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    req<span class="token punctuation">.</span>tokenDecode <span class="token operator">=</span> decoded
+  <span class="token punctuation">&#125;</span>
+  <span class="token function">next</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">//返回token给客户端.</span>
+app<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token string">'/login'</span><span class="token punctuation">,</span> <span class="token keyword">async</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">req<span class="token punctuation">,</span> res</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+  <span class="token keyword">const</span> <span class="token punctuation">&#123;</span> mail<span class="token punctuation">,</span> password <span class="token punctuation">&#125;</span><span class="token operator">=</span> req<span class="token punctuation">.</span>body<span class="token punctuation">;</span>
+  <span class="token comment">// 格式校验</span>
+  <span class="token keyword">if</span><span class="token punctuation">(</span> mail <span class="token operator">===</span> <span class="token string">''</span> <span class="token operator">||</span> password <span class="token operator">===</span> <span class="token string">''</span> <span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    <span class="token keyword">return</span> res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span> code<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span> msg<span class="token operator">:</span> <span class="token string">'非法参数'</span> <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span>
+  <span class="token keyword">const</span> userInfo  <span class="token operator">=</span> <span class="token keyword">await</span> userModel<span class="token punctuation">.</span><span class="token function">findOne</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span> mail<span class="token operator">:</span> mail<span class="token punctuation">,</span> password<span class="token operator">:</span> password  <span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>userInfo<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span> code<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span> msg<span class="token operator">:</span> <span class="token string">'信息错误'</span> <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span> <span class="token keyword">else</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">const</span> <span class="token punctuation">&#123;</span> _id<span class="token punctuation">,</span> mail<span class="token punctuation">,</span> mobile<span class="token punctuation">,</span> type <span class="token punctuation">&#125;</span> <span class="token operator">=</span> userInfo<span class="token punctuation">;</span>
+    <span class="token comment">//生成token</span>
+    <span class="token keyword">const</span> token <span class="token operator">=</span> jwt<span class="token punctuation">.</span><span class="token function">sign</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span> _id<span class="token punctuation">,</span> mail<span class="token punctuation">,</span> mobile<span class="token punctuation">,</span> type<span class="token punctuation">,</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> secret<span class="token punctuation">,</span> <span class="token punctuation">&#123;</span>
+      expiresIn<span class="token operator">:</span> <span class="token number">3600</span> <span class="token operator">*</span> <span class="token number">2</span> <span class="token comment">//秒到期时间</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    res<span class="token punctuation">.</span><span class="token function">cookie</span><span class="token punctuation">(</span><span class="token string">'token'</span><span class="token punctuation">,</span> token<span class="token punctuation">,</span> <span class="token punctuation">&#123;</span>
+      maxAge<span class="token operator">:</span> <span class="token number">1000</span> <span class="token operator">*</span> <span class="token number">60</span> <span class="token operator">*</span> <span class="token number">60</span> <span class="token operator">*</span> <span class="token number">24</span> <span class="token operator">*</span> <span class="token number">30</span><span class="token punctuation">,</span>
+      httpOnly<span class="token operator">:</span> <span class="token boolean">true</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span> code<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span> msg<span class="token operator">:</span> <span class="token string">'登录成功'</span><span class="token punctuation">,</span> status<span class="token operator">:</span> <span class="token string">'ok'</span><span class="token punctuation">,</span> data<span class="token operator">:</span><span class="token punctuation">&#123;</span> userInfo<span class="token punctuation">,</span> token <span class="token punctuation">&#125;</span> <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h4><p>环境变量在<code>npm script</code>中设置，本地开发时用<code>nodemon yarn start</code>，部署线上环境时使用<code>pm2 start --name coEnd npm -- run startPro</code>。</p>
+<p>需要根据环境变量走不同的数据库连接地址和图片前缀地址，如果公众号或者小程序有区分测试和正式环境，也可以在这里配置<code>APPID</code>和<code>SECRET</code>。</p>
+<pre class="line-numbers language-JSON" data-language="JSON"><code class="language-JSON">&quot;scripts&quot;: &#123;
+    &quot;start&quot;: &quot;NODE_ENV&#x3D;development node .&#x2F;bin&#x2F;www&quot;,
+    &quot;startPro&quot;: &quot;NODE_ENV&#x3D;production node .&#x2F;bin&#x2F;www&quot;
+  &#125;,<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<pre class="line-numbers language-JS" data-language="JS"><code class="language-JS">&#x2F;&#x2F; 全局配置文件 &#x2F;utils&#x2F;config.js
+const configBase &#x3D; &#123;
+	mongoDb: &#123; &#x2F;&#x2F; 数据库
+        development:&#39;mongodb:&#x2F;&#x2F;127.0.0.1:27017&#x2F;coach&#39;,
+        production:&#39;mongodb:&#x2F;&#x2F;127.0.0.1:27017&#x2F;coach&#39;,
+    &#125;,
+    fileUrl:&#123; &#x2F;&#x2F; 图片地址
+        development:&#39;http:&#x2F;&#x2F;127.0.0.1:3000&#x2F;&#39;,
+        production:&#39;https:&#x2F;&#x2F;api.nihaojob.com&#x2F;prod-api&#x2F;&#39;,
+    &#125;
+&#125;
+&#x2F;&#x2F; 引用的配置对象 在各分模块中调用
+let infoConfig &#x3D; &#123;&#125;
+let envKey &#x3D; process.env.NODE_ENV
+&#x2F;&#x2F; 预知环境变量
+let keys &#x3D; [&#39;development&#39;,&#39;production&#39;]
+&#x2F;&#x2F; 拼接引用的配置对象
+Object.keys(configBase).forEach(item &#x3D;&gt; &#123;
+	&#x2F;&#x2F; 预知环境变量
+	if(keys.includes(envKey))&#123;
+		infoConfig[item] &#x3D; configBase[item][envKey]
+	&#125;else&#123;&#x2F;&#x2F; 本地
+		infoConfig[item] &#x3D; configBase[item].host
+	&#125;
+&#125;)
+module.exports &#x3D; infoConfig;
+
+&#x2F;&#x2F; 使用
+const &#123; fileUrl &#125; &#x3D; require(&quot;..&#x2F;utils&#x2F;config&quot;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="Mongooes-连接"><a href="#Mongooes-连接" class="headerlink" title="Mongooes 连接"></a>Mongooes 连接</h4><p>在<code>app.js</code>中执行 <code>require(&#39;./utils/dbs&#39;)()</code>，并且把DB实例挂到<code>global</code>上。</p>
+<pre class="line-numbers language-JS" data-language="JS"><code class="language-JS">&#x2F;&#x2F; 配置文件
+var baseConfig &#x3D; require(&#39;.&#x2F;config.js&#39;);
+const dbs &#x3D; async function (env) &#123;
+    const mongoose &#x3D; require(&#39;mongoose&#39;);
+    mongoose.connect(baseConfig.mongoDb, &#123; useNewUrlParser: true, auto_reconnect: true, poolSize: 10 &#125;);
+    const db &#x3D; mongoose.connection;
+    db.on(&#39;error&#39;, console.error.bind(console, &#39;数据库链接失败&#39;));
+    db.once(&#39;open&#39;, callback &#x3D;&gt; &#123;
+        console.log(&#96;数据库链接成功，地址：$&#123;baseConfig.mongoDb&#125;&#96;)
+    &#125;);
+    global.db &#x3D; db;
+&#125;
+module.exports &#x3D; dbs;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h4 id="Mongooes-增删改"><a href="#Mongooes-增删改" class="headerlink" title="Mongooes 增删改"></a>Mongooes 增删改</h4><p>这部分不多说了，利ORM框架<code>Mongooes</code>增删改特别简单，先创建模型再根据模型操作。</p>
+<pre class="line-numbers language-JS" data-language="JS"><code class="language-JS">const mongoose &#x3D; require(&#39;mongoose&#39;);
+const &#123; db &#125; &#x3D; global;
+&#x2F;&#x2F; 创建Model
+const model &#x3D; new mongoose.Schema(&#123;
+    coachId:String, &#x2F;&#x2F; 教练ID
+&#125;, &#123;
+    timestamps: true, &#x2F;&#x2F; 自动增加创建、更新时间
+&#125;);
+
+const dbManage &#x3D; db.model(&#39;tag&#39;, model);
+&#x2F;&#x2F; 创建
+dbManage.create(&#123; name:&#39;&#39; &#125;)
+&#x2F;&#x2F; 更新 前边为查询条件 后边为更新内容
+dbManage.updateOne(&#123;_id:&#39;id&#39;&#125;,&#123; name:&#39;&#39; &#125;)
+&#x2F;&#x2F; 删除
+dbManage.remove(&#123;_id : &#39;id&#39;&#125;)
+&#x2F;&#x2F; 查找
+dbManage.find(&#123;_id : &#39;id&#39; &#125;)
+dbManage.findOne(&#123;_id : &#39;id&#39; &#125;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="Mongooes-查询"><a href="#Mongooes-查询" class="headerlink" title="Mongooes 查询"></a>Mongooes 查询</h4><p>查询的功能比较多了，比如字符串模糊查询，常见的分页、排序，时间范围搜索等。<br>直接贴一个模板吧，copy直接用版，哈哈。</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js">router<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/getList'</span><span class="token punctuation">,</span> <span class="token keyword">async</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">req<span class="token punctuation">,</span> res<span class="token punctuation">,</span> next</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">const</span> <span class="token punctuation">&#123;</span> nickName <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">,</span> name <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">,</span> tel <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">,</span> newStatus <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">,</span> start <span class="token operator">=</span> <span class="token string">'1900-01-01'</span><span class="token punctuation">,</span> end <span class="token operator">=</span> <span class="token string">'2222-01-01'</span>  <span class="token punctuation">&#125;</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>query
+    <span class="token keyword">const</span> <span class="token punctuation">&#123;</span> current <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span> pageSize <span class="token operator">=</span> <span class="token number">20</span>  <span class="token punctuation">&#125;</span> <span class="token operator">=</span> req<span class="token punctuation">.</span>query
+    <span class="token keyword">const</span> startTime <span class="token operator">=</span> <span class="token function">moment</span><span class="token punctuation">(</span>start<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">startOf</span><span class="token punctuation">(</span><span class="token string">'day'</span><span class="token punctuation">)</span>
+    <span class="token keyword">const</span> endTime <span class="token operator">=</span> <span class="token function">moment</span><span class="token punctuation">(</span>end<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">startOf</span><span class="token punctuation">(</span><span class="token string">'day'</span><span class="token punctuation">)</span>
+    <span class="token keyword">const</span> queryParams <span class="token operator">=</span> <span class="token punctuation">&#123;</span>
+        $and<span class="token operator">:</span> <span class="token punctuation">[</span>
+            <span class="token punctuation">&#123;</span> nickName<span class="token operator">:</span> <span class="token punctuation">&#123;</span> $regex<span class="token operator">:</span> <span class="token keyword">new</span> <span class="token class-name">RegExp</span><span class="token punctuation">(</span>nickName<span class="token punctuation">,</span> <span class="token string">'i'</span><span class="token punctuation">)</span> <span class="token punctuation">&#125;</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token comment">// 昵称模糊查询</span>
+            <span class="token punctuation">&#123;</span> name<span class="token operator">:</span> <span class="token punctuation">&#123;</span> $regex<span class="token operator">:</span> <span class="token keyword">new</span> <span class="token class-name">RegExp</span><span class="token punctuation">(</span>name<span class="token punctuation">,</span> <span class="token string">'i'</span><span class="token punctuation">)</span> <span class="token punctuation">&#125;</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token comment">// 姓名模糊查询</span>
+            <span class="token punctuation">&#123;</span> tel<span class="token operator">:</span> <span class="token punctuation">&#123;</span> $regex<span class="token operator">:</span> <span class="token keyword">new</span> <span class="token class-name">RegExp</span><span class="token punctuation">(</span>tel<span class="token punctuation">,</span> <span class="token string">'i'</span><span class="token punctuation">)</span> <span class="token punctuation">&#125;</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>   <span class="token comment">//手机号模糊查询</span>
+        <span class="token punctuation">]</span><span class="token punctuation">,</span>
+        coachId<span class="token operator">:</span> req<span class="token punctuation">.</span>tokenDecode<span class="token punctuation">.</span>_id<span class="token punctuation">,</span>
+        createdAt<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+            $gte<span class="token operator">:</span> startTime<span class="token punctuation">.</span><span class="token function">toDate</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+            $lte<span class="token operator">:</span> <span class="token function">moment</span><span class="token punctuation">(</span>endTime<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">endOf</span><span class="token punctuation">(</span><span class="token string">'day'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toDate</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token comment">// $lte: moment(today).endOf('day').toDate() // 查询当天</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newStatus <span class="token operator">!==</span> <span class="token string">''</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token comment">// 数字状态模糊查询</span>
+        queryParams<span class="token punctuation">.</span>$and<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span> newStatus<span class="token operator">:</span> newStatus <span class="token punctuation">&#125;</span><span class="token punctuation">,</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token comment">// 分页 skip跳过数 limit每页数 sort排序方式</span>
+    <span class="token keyword">const</span> resault <span class="token operator">=</span> <span class="token keyword">await</span> studentsModel<span class="token punctuation">.</span><span class="token function">find</span><span class="token punctuation">(</span>queryParams<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">skip</span><span class="token punctuation">(</span><span class="token function">Number</span><span class="token punctuation">(</span>pageSize<span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token function">Number</span><span class="token punctuation">(</span>current<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">limit</span><span class="token punctuation">(</span><span class="token function">Number</span><span class="token punctuation">(</span>pageSize<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">sort</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span> createdAt<span class="token operator">:</span> <span class="token string">'desc'</span> <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 总数</span>
+    <span class="token keyword">const</span> total <span class="token operator">=</span> <span class="token keyword">await</span> studentsModel<span class="token punctuation">.</span><span class="token function">find</span><span class="token punctuation">(</span>queryParams<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">count</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>
+        code<span class="token operator">:</span><span class="token number">1</span><span class="token punctuation">,</span>
+        data<span class="token operator">:</span><span class="token punctuation">&#123;</span>
+            list<span class="token operator">:</span> resault<span class="token punctuation">,</span>
+            page<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+                total<span class="token punctuation">,</span>
+                current<span class="token operator">:</span> <span class="token function">Number</span><span class="token punctuation">(</span>current<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token comment">// 当前页</span>
+                pageSize<span class="token operator">:</span> <span class="token function">Number</span><span class="token punctuation">(</span>pageSize<span class="token punctuation">)</span>
+            <span class="token punctuation">&#125;</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="图片上传"><a href="#图片上传" class="headerlink" title="图片上传"></a>图片上传</h4><p>很多地方都要用到图片上传，使用<code>formidable</code>插件，设置上传路径为<code>public</code>，根据环境变量 + 文件名拼接图片地址，单独把图片地址存到一张表中，方便其他地方复用。</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">var</span> express <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'express'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> router <span class="token operator">=</span> express<span class="token punctuation">.</span><span class="token function">Router</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> path <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'path'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> formidable <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'formidable'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> inFileModel <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"../model/inFile"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// 环境变量配置</span>
+<span class="token keyword">const</span> <span class="token punctuation">&#123;</span> fileUrl <span class="token punctuation">&#125;</span> <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"../utils/config"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// 上传文件</span>
+router<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">,</span> <span class="token keyword">async</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">req<span class="token punctuation">,</span> res<span class="token punctuation">,</span> next</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">var</span> imgPath <span class="token operator">=</span> path<span class="token punctuation">.</span><span class="token function">dirname</span><span class="token punctuation">(</span>__dirname<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">'/public'</span><span class="token punctuation">;</span>
+    <span class="token keyword">var</span> form <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">formidable<span class="token punctuation">.</span>IncomingForm</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    form<span class="token punctuation">.</span>encoding <span class="token operator">=</span> <span class="token string">'utf-8'</span><span class="token punctuation">;</span> <span class="token comment">//设置编辑</span>
+    form<span class="token punctuation">.</span>uploadDir <span class="token operator">=</span> imgPath<span class="token punctuation">;</span> <span class="token comment">//设置上传目录</span>
+    form<span class="token punctuation">.</span>keepExtensions <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span> <span class="token comment">//保留后缀</span>
+    form<span class="token punctuation">.</span>maxFieldsSize <span class="token operator">=</span> <span class="token number">2</span> <span class="token operator">*</span> <span class="token number">1024</span> <span class="token operator">*</span> <span class="token number">1024</span><span class="token punctuation">;</span> <span class="token comment">//文件大小</span>
+    form<span class="token punctuation">.</span>type <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> <span class="token function-variable function">awaitFn</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">Promise</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">resolve<span class="token punctuation">,</span> reject</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+            form<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span>req<span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token parameter">err<span class="token punctuation">,</span> fields<span class="token punctuation">,</span> files</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+                <span class="token keyword">let</span> src <span class="token operator">=</span> files<span class="token punctuation">.</span>file<span class="token punctuation">.</span>path<span class="token punctuation">.</span><span class="token function">split</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">let</span> urlString <span class="token operator">=</span> src<span class="token punctuation">[</span>src<span class="token punctuation">.</span>length <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span>err<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span> <span class="token function">reject</span><span class="token punctuation">(</span>err<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token punctuation">&#125;</span>
+                <span class="token function">resolve</span><span class="token punctuation">(</span>urlString<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+    <span class="token comment">// 文件名</span>
+    <span class="token keyword">const</span> filePath <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">awaitFn</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 储存上传记录</span>
+    <span class="token keyword">const</span> fileInfo <span class="token operator">=</span> <span class="token keyword">await</span> inFileModel<span class="token punctuation">.</span><span class="token function">create</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span> fileName<span class="token operator">:</span>fileUrl <span class="token operator">+</span> filePath<span class="token punctuation">,</span> <span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+    res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span> code<span class="token operator">:</span><span class="token number">1</span><span class="token punctuation">,</span> msg<span class="token operator">:</span><span class="token string">'上传成功'</span><span class="token punctuation">,</span> data<span class="token operator">:</span>fileInfo <span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+module<span class="token punctuation">.</span>exports <span class="token operator">=</span> router<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="定时获取accesstoken"><a href="#定时获取accesstoken" class="headerlink" title="定时获取accesstoken"></a>定时获取accesstoken</h4><p>有过微信开发经验的同学都知道，调用微信服务端api需要<code>accesstoken</code>，时效2小时，利用<code>CronJob</code>定时获取<code>accesstoken</code>并保存成文件，获取失败时利用<code>nodemailer</code>发送报警邮件。</p>
+<p>在部署时单独跑一个PM2进程，<code>pm2 start cronTask.js</code>。</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token comment">// cronTask.js</span>
+<span class="token keyword">var</span> CronJob <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'cron'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>CronJob<span class="token punctuation">;</span>
+<span class="token keyword">const</span> moment <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'moment'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token punctuation">&#123;</span> writeFile <span class="token punctuation">&#125;</span> <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'fs'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>promises
+<span class="token keyword">const</span> axios <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'axios'</span><span class="token punctuation">)</span>
+<span class="token keyword">var</span> weConfig <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'./utils/weConfig'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">var</span> nodemailer <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'nodemailer'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// 获取微信token</span>
+<span class="token keyword">var</span> getWeToken <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CronJob</span><span class="token punctuation">(</span><span class="token string">'0 0 0/1 * * *'</span><span class="token punctuation">,</span> <span class="token keyword">async</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'获取token任务执行：'</span><span class="token punctuation">,</span> <span class="token function">moment</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">format</span><span class="token punctuation">(</span><span class="token string">'YYYY-MM-DD HH:mm:ss'</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">const</span> <span class="token punctuation">&#123;</span> <span class="token constant">APPID</span><span class="token punctuation">,</span> <span class="token constant">SECRET</span> <span class="token punctuation">&#125;</span> <span class="token operator">=</span> weConfig
+  <span class="token keyword">const</span> url <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&amp;appid=</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$&#123;</span><span class="token constant">APPID</span><span class="token interpolation-punctuation punctuation">&#125;</span></span><span class="token string">&amp;secret=</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$&#123;</span><span class="token constant">SECRET</span><span class="token interpolation-punctuation punctuation">&#125;</span></span><span class="token template-punctuation string">`</span></span>
+  axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>url<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token parameter">res</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>res <span class="token operator">&amp;&amp;</span> res<span class="token punctuation">.</span>status <span class="token operator">===</span> <span class="token number">200</span> <span class="token operator">&amp;&amp;</span> res<span class="token punctuation">.</span>data<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      <span class="token comment">// 保存accesstoken文件</span>
+      <span class="token function">writeFile</span><span class="token punctuation">(</span><span class="token string">'./accesstoken.txt'</span><span class="token punctuation">,</span> res<span class="token punctuation">.</span>data<span class="token punctuation">.</span>access_token<span class="token punctuation">,</span> <span class="token string">'utf8'</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#125;</span> <span class="token keyword">else</span> <span class="token punctuation">&#123;</span>
+      <span class="token comment">// 发送报警内容</span>
+      <span class="token function">sendMail</span><span class="token punctuation">(</span><span class="token string">'nihaojob@163.com'</span><span class="token punctuation">,</span> <span class="token string">'保存错误：'</span> <span class="token operator">+</span> <span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>res<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#125;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token string">'America/Los_Angeles'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">sendMail</span><span class="token punctuation">(</span><span class="token parameter">mail<span class="token punctuation">,</span> text</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+  <span class="token comment">// 发送邮箱配置</span>
+  <span class="token keyword">var</span> mailTransport <span class="token operator">=</span> nodemailer<span class="token punctuation">.</span><span class="token function">createTransport</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span>
+    host<span class="token operator">:</span> <span class="token string">'smtp.163.com'</span><span class="token punctuation">,</span>
+    port<span class="token operator">:</span> <span class="token number">465</span><span class="token punctuation">,</span>
+    secureConnection<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token comment">// 使用SSL方式（安全方式，防止被窃取信息）</span>
+    auth<span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+      user<span class="token operator">:</span> <span class="token string">'邮箱'</span><span class="token punctuation">,</span>
+      pass<span class="token operator">:</span> <span class="token string">'密码'</span>
+    <span class="token punctuation">&#125;</span><span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">const</span> options <span class="token operator">=</span> Object<span class="token punctuation">.</span><span class="token function">assign</span><span class="token punctuation">(</span>mailTransport<span class="token punctuation">,</span> <span class="token punctuation">&#123;</span> from<span class="token operator">:</span> <span class="token string">'nihaojob@163.com'</span><span class="token punctuation">,</span> to<span class="token operator">:</span> mail <span class="token punctuation">&#125;</span><span class="token punctuation">,</span> <span class="token punctuation">&#123;</span>
+    subject<span class="token operator">:</span> <span class="token string">'token获取失败报警'</span><span class="token punctuation">,</span>
+    text<span class="token operator">:</span> text<span class="token punctuation">,</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">)</span>
+  mailTransport<span class="token punctuation">.</span><span class="token function">sendMail</span><span class="token punctuation">(</span>options<span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token parameter">err<span class="token punctuation">,</span> msg</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>err<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+      res<span class="token punctuation">.</span><span class="token function">send</span><span class="token punctuation">(</span><span class="token punctuation">&#123;</span> code<span class="token operator">:</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span> msg<span class="token operator">:</span> err <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">return</span>
+    <span class="token punctuation">&#125;</span>
+    mailTransport<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+getWeToken<span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="生成小程序参数二维码"><a href="#生成小程序参数二维码" class="headerlink" title="生成小程序参数二维码"></a>生成小程序参数二维码</h4><p>读取<code>accesstoken.txt</code>获取<code>token</code>，利用<code>axios</code>发送给微信服务器获取图片，这块有个点需要注意，请求会直接返回图片，需设置<code>responseType: &#39;arraybuffer&#39;</code>直接把<code>buffer</code>数据保存为图片。</p>
+<pre class="line-numbers language-JS" data-language="JS"><code class="language-JS">var express &#x3D; require(&#39;express&#39;);
+var router &#x3D; express.Router();
+const &#123; fileUrl &#125; &#x3D; require(&quot;..&#x2F;utils&#x2F;config&quot;);
+const &#123; writeFile, readFile &#125; &#x3D; require(&#39;fs&#39;).promises
+
+const axios &#x3D; require(&#39;axios&#39;)
+router.post(&#39;&#x2F;getQrcode&#39;, async function (req, res, next) &#123;
+  const &#123; path &#x3D; &#39;&#39;, scene &#x3D; &#39;&#39; &#125; &#x3D; req.body;
+  &#x2F;&#x2F; 格式校验
+  if (path &#x3D;&#x3D;&#x3D; &#39;&#39;)&#123;
+    res.send(&#123; code: -1, msg: &#39;非法参数&#39; &#125;);
+    return
+  &#125;
+
+  const accessToken &#x3D; await readFile(&#39;.&#x2F;accesstoken.txt&#39;)
+  const url &#x3D; &#96;https:&#x2F;&#x2F;api.weixin.qq.com&#x2F;wxa&#x2F;getwxacodeunlimit?access_token&#x3D;$&#123;accessToken.toString()&#125;&#96;
+  const data &#x3D; await axios.post(url,&#123;
+    scene: scene,
+    page: path,
+    width:430,
+  &#125;,&#123;
+    headers:&#123;
+      &quot;Content-Type&quot;: &quot;application&#x2F;json&quot;
+    &#125;,
+    responseType: &#39;arraybuffer&#39;,
+  &#125;)
+  if (data.data)&#123;
+    const fileName &#x3D;  &#39;qrCode_&#39; + new Date().getTime() + &#39;.jpg&#39;
+    await writeFile(&#39;.&#x2F;public&#x2F;&#39; + fileName, data.data)
+    res.send(&#123; code: 1, data: fileUrl + fileName &#125;);
+  &#125;else&#123;
+    res.send(&#123; code:-1, msg:&#39;请求错误&#39; &#125;)
+  &#125;
+&#125;);
+module.exports &#x3D; router;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h4 id="for-await使用"><a href="#for-await使用" class="headerlink" title="for await使用"></a>for await使用</h4><p>我们有一个用户列表，需要根据用户列表里的用户id查询另外一张列表里的用户详情，将他们拼接成一个新的列表返回给前端，我不太会用关联查询，探索出一个比较笨的方法，用<code>for await</code>这种方法实现的。</p>
+<pre class="line-numbers language-JS" data-language="JS"><code class="language-JS">router.get(&#39;&#x2F;getTopList&#39;, async function (req, res, next) &#123;
+    const &#123; coachId &#125; &#x3D; req.tokenDecode;
+    let data &#x3D; await topModel.find(&#123; coachId &#125;).sort(&#123; integral: &#39;desc&#39; &#125;);
+    if (data &amp;&amp; data.length !&#x3D;&#x3D; 0) &#123;
+        data &#x3D; JSON.parse(JSON.stringify(data))
+        for (const item of data) &#123;
+            const info &#x3D; await studentsModel.findOne(&#123; _id: item.studentsId&#125;)
+            item.info &#x3D; info
+        &#125;
+    &#125;
+    res.send(&#123;code: 1, data &#125;)
+&#125;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h4 id="taro小程序"><a href="#taro小程序" class="headerlink" title="taro小程序"></a>taro小程序</h4><p>这篇笔记的重点在Node上，就不展开聊了，简单写下登录、request封装、环境变量。</p>
+<p><strong>登录</strong></p>
+<p>登录的流程是，用户点击<code>openType</code>为<code>getUserInfo</code>的按钮发起授权，授权成功后调用<code>Taro.login</code>获取<code>code</code>，再把<code>code</code>发给后端，后端通过<code>code</code>、<code>APPID</code>、<code>SECRET</code>获取<code>openid</code>，剩下的就是用<code>openid</code>来绑定用户关系了。</p>
+<blockquote>
+<p>getUserInfo按钮 =&gt; 授权 =&gt; getCode =&gt; 获取openid</p>
+</blockquote>
+<p><strong>taro-request</strong></p>
+<p>taro官网上有一个<code>taro-request</code>的封装，蛮好用的<a target="_blank" rel="noopener" href="https://github.com/TigerHee/taro-request">地址</a>。</p>
+<p><strong>环境变量</strong></p>
+<p>Taro的环境变量从<code>process.env.NODE_ENV</code>中读取，内置环境变量为<code>development</code>、<code>production</code>，前端需要根据环境变量走不同的环境。</p>
+<pre class="line-numbers language-js" data-language="js"><code class="language-js"><span class="token keyword">const</span> <span class="token function-variable function">getBaseUrl</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token parameter">url</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">&#123;</span>
+  <span class="token keyword">let</span> <span class="token constant">BASE_URL</span> <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>process<span class="token punctuation">.</span>env<span class="token punctuation">.</span><span class="token constant">NODE_ENV</span> <span class="token operator">===</span> <span class="token string">'development'</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">//开发环境</span>
+    <span class="token constant">BASE_URL</span> <span class="token operator">=</span> <span class="token string">'http://localhost:3000'</span>
+  <span class="token punctuation">&#125;</span> <span class="token keyword">else</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">// 生产环境</span>
+    <span class="token constant">BASE_URL</span> <span class="token operator">=</span> <span class="token string">'https://api.nihaojob.com/prod-api'</span>
+  <span class="token punctuation">&#125;</span>
+  <span class="token keyword">return</span> <span class="token constant">BASE_URL</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> getBaseUrl<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h4 id="后台部分"><a href="#后台部分" class="headerlink" title="后台部分"></a>后台部分</h4><p>后台使用<code>vue-element-admin</code>模板，几乎没有复杂的内容，接入了图表、富文本、图片上传，就不展开了，后续会开发发菜单、权限管理，有可能使用<code>node-casbin</code>或<code>acl</code>实现。</p>
+<h4 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h4><p>前端静态文件直接使用<code>Nginx</code>指定静态目录，后端接口通过PM2启动服务，并用<code>Nginx</code>的<code>proxy_pass</code>转到后端服务端口上。<strong>HTTPS证书申请与Nginx配置</strong>小节中有贴出，列一下自己最常用的几个PM2命令。</p>
+<pre class="line-numbers language-BASH" data-language="BASH"><code class="language-BASH">&#x2F;&#x2F; npm script 启动应用
+$ pm2 start --name 应用名称 npm -- run &#39;npm sctipt名称&#39;
+&#x2F;&#x2F; 应用列表
+$ pm2 list
+&#x2F;&#x2F; 查看日志
+$ pm2 log
+&#x2F;&#x2F; 重启应用
+$ pm2 restart &#39;应用id&#39;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/aed14f790ef64f66b907639f2e7acb1f~tplv-k3u1fbpfcp-watermark.image"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>开头段子中有调侃后端大佬，纯粹只是玩笑；互联网技术日新月异，大家都在齐头并进，前端的内容都学不完，又怎敢对不懂的行业指手画脚。希望自己<strong>拥抱变化，保持敬畏</strong>。</p>
+<p>听说每个程序员都有一个创业梦，前端工程师真的可以借助Node跑起来自己的第一个MVP。</p>
+
+  <p> — 2021年7月4日</p>
+  
+
+
+          <div class="row mt-2">
+  
+    <div class="eight columns">
+      <p id="madewith" style="color: #c7c7c7;">静水流深，闻喧享静。空山鸣响，见惯司空。
+        
+    </div>
+
+    <!-- Sepcial thanks to https://simpleicons.org/ for the icons -->
+    <div class="four columns mb-3 posisi" >
+      
+      <a class="ml-0 footer-link icon" href="https://github.com/nihaojob" target="_blank" style="text-decoration: none" rel="noreferrer" aria-label="GitHub">
+        <svg class="github svg-hov" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      </a>
+      
+
+      
+
+      
+
+      
+
+      
+
+    </div>
+  
+</div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <script src="/js/nanobar.min.js"></script>
+  <script>
+    var options = {
+      classname: 'nanobar',
+      id: 'myNanobar'
+    };
+    var nanobar = new Nanobar(options);
+    nanobar.go(30);
+    nanobar.go(76);
+    nanobar.go(100);
+  </script>
+
+</body>
+
+</html>
