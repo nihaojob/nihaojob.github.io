@@ -1,0 +1,56 @@
+#title in header
+title: "秦少卫的博客"
+
+#main info
+#owner
+owner: "骑踏板摩托的JSer"
+# email: nihaojob@163.com
+info: "日常发表笔记在掘金，曾就职于优信二手车，现就职于水滴筹大数据前端部门。"
+#description
+desc: "我是一位用过table布局，调过IE6兼容性的前端开发人员，经历了从jquery到Vue、React的前后端分离演变，参与过民生银行门户网站建设、低代码系统研发等工作，目前在参与研发云手机互动协作工具的前端工作，目前在学习和落地Vue系统的单元测试，最近阅读《重构》、《架构整洁之道》。欢迎你的光临😁"
+
+#menu
+menu:
+  归档: /archives
+  掘金: https://juejin.cn/user/3843548383549214
+  简介: /About
+
+
+#index/main page max show posts (in number)
+max_post: 4
+
+# Colors use hex color without #
+# Theme color
+tcolor: 0FA0CE
+
+# Define path to user css
+#(could be also located outside of theme)
+# Relative to source/ directory
+usercss: css/user.css
+
+# social profile at the footer/bottom
+footer: true
+placename: Earth
+# placelink: https://en.wikipedia.org/wiki/Earth
+github: https://github.com/nihaojob
+# linkedin: https://linkedin.com/in/adisaktijrs
+# twitter: https://twitter.com/adisaktijrs
+# instagram: https://instagram.com/adisaktijrs
+# stackoverflow: https://stackoverflow.com/story/tobiasreithmeier
+
+# Misc
+nanobar: /js/nanobar.min.js
+switch_light: ☀️
+switch_dark: 🌑
+
+# favicon
+favicon: /images/favicon.png
+# thumbnail
+thumbnail: /images/thumbnail.jpg
+
+article:
+  thumbnail: true
+
+# DISQUS comments (sign up to Disqus to get disqus_shortname)
+disqus_enabled: false
+disqus_shortname: https-adisaktijrs-github-io
