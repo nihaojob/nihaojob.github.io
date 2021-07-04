@@ -8,7 +8,7 @@ branches:
     - main # build main branch only
 script:
   - hexo clean
-  - hexo generate # generate static files
+  - yarn build # generate static files
 deploy:
   provider: pages
   skip-cleanup: true
