@@ -12,8 +12,9 @@ desc: "我是一位用过table布局，调过IE6兼容性的前端开发人员�
 #menu
 menu:
   归档: /archives
+  关于: /About
+  RSS: /atom.xml
   掘金: https://juejin.cn/user/3843548383549214
-  简介: /About
 
 
 #index/main page max show posts (in number)
