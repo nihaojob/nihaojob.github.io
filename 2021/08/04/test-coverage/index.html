@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <!-- Minima -->
+  <!-- Hexo theme created by @adisaktijrs -->
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+
+  
+  <title>生成Github JS 仓库的测试覆盖率徽标</title>
+  
+  <link rel="canonical" href="https://nihaojob.github.io/2021/08/04/test-coverage/">
+  
+  <meta name="description" content="今天给我的开源项目popular-message增加了一下测试覆盖率的图标，覆盖率提高到了88%，不过这个覆盖率的图标还真不是直接放个图片链接这么简单。 不过也难不到哪里去，除了jest单元测试框架的语法，主要是借助travis-ci、coveralls.io这2工具实现测试报告自动上报。 快速的写">
+  
+  
+  <meta name="author" content="nihaojob@163.com">
+  
+  <meta property="og:image" content="https://nihaojob.github.ioundefined">
+  
+  <meta property="og:site_name" content="秦少卫的博客" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="生成Github JS 仓库的测试覆盖率徽标" />
+  
+  <meta property="og:description" content="今天给我的开源项目popular-message增加了一下测试覆盖率的图标，覆盖率提高到了88%，不过这个覆盖率的图标还真不是直接放个图片链接这么简单。 不过也难不到哪里去，除了jest单元测试框架的语法，主要是借助travis-ci、coveralls.io这2工具实现测试报告自动上报。 快速的写">
+  
+  <meta property="og:url" content="https://nihaojob.github.io/2021/08/04/test-coverage/" />
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="生成Github JS 仓库的测试覆盖率徽标">
+  
+  <meta name="twitter:description" content="今天给我的开源项目popular-message增加了一下测试覆盖率的图标，覆盖率提高到了88%，不过这个覆盖率的图标还真不是直接放个图片链接这么简单。 不过也难不到哪里去，除了jest单元测试框架的语法，主要是借助travis-ci、coveralls.io这2工具实现测试报告自动上报。 快速的写">
+  
+  
+  <meta name="twitter:image" content="https://nihaojob.github.ioundefined">
+  
+  <meta name="twitter:url" content="https://nihaojob.github.io/2021/08/04/test-coverage/" />
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Preload fonts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="preload" href="../fonts/dm-serif-display-v4-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/inter-v2-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+<link rel="stylesheet" href="/css/normalize.css">
+
+  
+<link rel="stylesheet" href="/css/skeleton.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+<link rel="stylesheet" href="/css/prism-dark.css">
+
+  
+<link rel="stylesheet" href="/css/prism-line-numbers.css">
+
+  <!-- User css -->
+  
+  
+<link rel="stylesheet" href="/css/user.css">
+
+  
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+  <!-- Custom Theme Color Style
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <style>
+  a:not(.icon) {
+    text-decoration-color: #0FA0CE;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 50%,
+      #0FA0CE 50%
+    );
+  }
+  blockquote {
+    border-left: 8px solid #0FA0CE;
+  }
+  .nanobar .bar {
+    background: #0FA0CE;
+  }
+  .button.button-primary:hover,
+  button.button-primary:hover,
+  input[type="submit"].button-primary:hover,
+  input[type="reset"].button-primary:hover,
+  input[type="button"].button-primary:hover,
+  .button.button-primary:focus,
+  button.button-primary:focus,
+  input[type="submit"].button-primary:focus,
+  input[type="reset"].button-primary:focus,
+  input[type="button"].button-primary:focus {
+    background-color: #0FA0CE;
+    border-color: #0FA0CE;
+  }
+  input[type="email"]:focus,
+  input[type="number"]:focus,
+  input[type="search"]:focus,
+  input[type="text"]:focus,
+  input[type="tel"]:focus,
+  input[type="url"]:focus,
+  input[type="password"]:focus,
+  textarea:focus,
+  select:focus {
+    border: 1px solid #0FA0CE;
+  }
+</style>
+
+  <!-- Google Analytics (With Privacy Settings On)
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="秦少卫的博客" type="application/atom+xml">
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div>
+
+        <div class="row">
+  <div class="two columns" style="max-width: 50px">
+    <h1 class="mt-2 mode">
+      <div onclick=setDarkMode(true) id="darkBtn">🌑</div>
+      <div onclick=setDarkMode(false) id="lightBtn" class=hidden>☀️</div>
+      <script >
+        if (localStorage.getItem('preferredTheme') == 'dark') {
+          setDarkMode(true)
+        }
+        function setDarkMode(isDark) {
+          var darkBtn = document.getElementById('darkBtn')
+          var lightBtn = document.getElementById('lightBtn')
+          if (isDark) {
+            lightBtn.style.display = "block"
+            darkBtn.style.display = "none"
+            localStorage.setItem('preferredTheme', 'dark');
+          } else {
+            lightBtn.style.display = "none"
+            darkBtn.style.display = "block"
+            localStorage.removeItem('preferredTheme');
+          }
+          document.body.classList.toggle("darkmode");
+        }
+      </script>
+    </h1>
+  </div>
+
+  <div class="six columns ml-1">
+    <h1 class="mt-2">
+      秦少卫的博客
+    </h1>
+  </div>
+
+  <div class="twelve columns">
+    <div class="row">
+      <div class="nine columns left">
+        <a href="/">主页</a>
+        
+          
+          <a href="/archives" class="ml">归档</a>
+          
+        
+          
+          <a href="/About" class="ml">关于</a>
+          
+        
+          
+          <a href="/atom.xml" class="ml">RSS</a>
+          
+        
+          
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/3843548383549214" class="ml">掘金</a>
+          
+        
+        
+      </div>
+    </div>
+    <hr style="margin-bottom: 2.6rem">
+  </div>
+</div>
+
+        <div class="trans">
+            <h2>生成Github JS 仓库的测试覆盖率徽标</h2>
+
+  <p>今天给我的开源项目<a target="_blank" rel="noopener" href="https://github.com/nihaojob/popular-message">popular-message</a>增加了一下测试覆盖率的图标，覆盖率提高到了88%，不过这个覆盖率的图标还真不是直接放个图片链接这么简单。</p>
+<p>不过也难不到哪里去，除了jest单元测试框架的语法，主要是借助<a target="_blank" rel="noopener" href="https://travis-ci.com/">travis-ci</a>、<a target="_blank" rel="noopener" href="https://coveralls.io/">coveralls.io</a>这2工具实现测试报告自动上报。</p>
+<p>快速的写下笔记备忘，如果你在搞单元测试，恰巧也要增加测试覆盖率图表，希望能够帮到你，大神跳过。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c04644be6c534feca262245878df6dd3~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<p>涉及工具：</p>
+<ol>
+<li>Jest：Js测试框架</li>
+<li>Travis-CI：CI 持续集成服务平台</li>
+<li>Coveralls.io：测试报告展示</li>
+</ol>
+<h3 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h3><p>首先选择一个单元测试框架，我用的Jest，编写完单元测试代码以后，我们要确保<a target="_blank" rel="noopener" href="https://travis-ci.com/">travis-ci</a>、<a target="_blank" rel="noopener" href="https://coveralls.io/">coveralls.io</a>这2个网站<strong>使用GitHub账号授权登录，并有响应的读写权限</strong>，然后再按照流程配置就轻车熟路了。</p>
+<ol>
+<li>GitHub账号授权登录<a target="_blank" rel="noopener" href="https://travis-ci.com/">travis-ci</a>、<a target="_blank" rel="noopener" href="https://coveralls.io/">coveralls.io</a></li>
+<li>安装Jest，编写单元测试代码</li>
+<li>安装 Coveralls， 增加测试报告上报脚本</li>
+<li>配置Travis 文件，提交代码后自动执行上报</li>
+<li>提交代码触发CI，查看覆盖率</li>
+</ol>
+<h3 id="1-GitHub账号授权登录travis-ci、coveralls-io"><a href="#1-GitHub账号授权登录travis-ci、coveralls-io" class="headerlink" title="1. GitHub账号授权登录travis-ci、coveralls.io"></a>1. GitHub账号授权登录<a target="_blank" rel="noopener" href="https://travis-ci.com/">travis-ci</a>、<a target="_blank" rel="noopener" href="https://coveralls.io/">coveralls.io</a></h3><p>这一步很简单，只需要授权登录就好，但是必须的，否则不能根据仓库自动执行。</p>
+<p>授权后会有项目列表：<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5cb12f51fd3140d7b78934b12296206b~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d9e642816b9d49a2be91296ac15703af~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<h3 id="2-安装Jest，编写单元测试代码"><a href="#2-安装Jest，编写单元测试代码" class="headerlink" title="2. 安装Jest，编写单元测试代码"></a>2. 安装Jest，编写单元测试代码</h3><p>安装依赖，编写单测代码，增加Script选项，然后直接运行即可。</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">yarn</span> <span class="token function">add</span> jest -D<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+<p><a target="_blank" rel="noopener" href="https://github.com/nihaojob/popular-message/blob/main/test/index.test.js">测试代码</a>不再贴进来，可在Github查看。</p>
+<p>package.json增加测试脚本</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json">
+<span class="token punctuation">&#123;</span>
+  <span class="token property">"scripts"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token property">"test"</span><span class="token operator">:</span> <span class="token string">"jest"</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>执行结果：<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d80f723a707e4fd5860a734d643879ab~tplv-k3u1fbpfcp-zoom-1.image" alt="2021-08-04 19.02.48.gif"></p>
+<h3 id="3-安装-Coveralls，-增加测试报告上报脚本"><a href="#3-安装-Coveralls，-增加测试报告上报脚本" class="headerlink" title="3. 安装 Coveralls， 增加测试报告上报脚本"></a>3. 安装 Coveralls， 增加测试报告上报脚本</h3><p>本地执行 jest –coverage 时会生成测试报告HTML文件， Coveralls工具会把测试报告上传到<a target="_blank" rel="noopener" href="https://coveralls.io/">coveralls.io</a>网站，可以展示测试报告并生成徽章。</p>
+<p>安装coveralls：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">$ <span class="token function">yarn</span> <span class="token function">add</span> coveralls -D<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+<p>package.json增加上报脚本：</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+  <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"popular-message"</span><span class="token punctuation">,</span>
+  <span class="token property">"scripts"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+    <span class="token property">"test"</span><span class="token operator">:</span> <span class="token string">"jest"</span><span class="token punctuation">,</span>
+    <span class="token property">"coveralls"</span><span class="token operator">:</span> <span class="token string">"jest --coverage --coverageReporters=text-lcov | coveralls"</span><span class="token punctuation">,</span> <span class="token comment">// 上报脚本</span>
+  <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<p>本地执行生成覆盖率的效果，这一步仅演示覆盖率生成，与上报无关。<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/75404c00583141efb62b50b2e792812a~tplv-k3u1fbpfcp-zoom-1.image" alt="1.gif"></p>
+<h3 id="4-配置Travis-文件，提交代码后自动执行上报"><a href="#4-配置Travis-文件，提交代码后自动执行上报" class="headerlink" title="4. 配置Travis 文件，提交代码后自动执行上报"></a>4. 配置Travis 文件，提交代码后自动执行上报</h3><p>授权Github账号授权Travis后，在每次提交会按照项目中的<code>.travis.yml</code>配置文件自动执行脚本，只配置自动上报测试报告脚本。</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript">language<span class="token operator">:</span> node_js
+node_js<span class="token operator">:</span>
+  <span class="token operator">-</span> <span class="token number">14</span> # use nodejs v10 <span class="token constant">LTS</span>
+cache<span class="token operator">:</span> npm
+script<span class="token operator">:</span>
+  <span class="token operator">-</span> yarn coveralls # generate <span class="token keyword">static</span> files<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+
+<h3 id="5-提交代码触发CI，查看覆盖率"><a href="#5-提交代码触发CI，查看覆盖率" class="headerlink" title="5. 提交代码触发CI，查看覆盖率"></a>5. 提交代码触发CI，查看覆盖率</h3><p>提交代码后，就可以在Travis-CI后台看到执行过程了，执行成功后等几分钟去<a target="_blank" rel="noopener" href="https://coveralls.io/">coveralls.io</a>查看报告，这是我项目的<a target="_blank" rel="noopener" href="https://coveralls.io/github/nihaojob/popular-message">测试报告</a>。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9a5e2dd5d3b7493c9d6a23d5a7e6ea8c~tplv-k3u1fbpfcp-zoom-1.image"></p>
+<h3 id=""><a href="#" class="headerlink" title=""></a><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0b50e6c759484b6295df557e4d720bd3~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></h3><p>点击EMBED按钮获得带分辨率的徽章，拷贝到自己的项目ReadMe文件里就可以了。<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/92185563e95844558bb817d248497a25~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>自己最近的一篇笔记是<a target="_blank" rel="noopener" href="https://juejin.cn/post/6978831511164289055">《Vue业务系统落地单元测试》</a>，对单元测试的空白算是补上了一点，趁着热乎劲把自己的小插件也加了一下单元测试，如果你也在学习单元测试，大家一起Star、相互鼓励学习吧。</p>
+<p>看到自己的开源小插件<a target="_blank" rel="noopener" href="https://github.com/nihaojob/popular-message">popular-message</a>从0到200多Star，真的是满心欢喜，感谢阮一峰老师博客的介绍，感谢公众号的推送，感谢素未谋面的朋友提来PR和Issue。</p>
+
+  <p> — 2021年8月4日</p>
+  
+
+
+          <div class="row mt-2">
+  
+    <div class="eight columns">
+      <p id="madewith" style="color: #c7c7c7;">静水流深，闻喧享静。空山鸣响，见惯司空。
+        
+    </div>
+
+    <!-- Sepcial thanks to https://simpleicons.org/ for the icons -->
+    <div class="four columns mb-3 posisi" >
+      
+      <a class="ml-0 footer-link icon" href="https://github.com/nihaojob" target="_blank" style="text-decoration: none" rel="noreferrer" aria-label="GitHub">
+        <svg class="github svg-hov" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      </a>
+      
+
+      
+
+      
+
+      
+
+      
+
+    </div>
+  
+</div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <script src="/js/nanobar.min.js"></script>
+  <script>
+    var options = {
+      classname: 'nanobar',
+      id: 'myNanobar'
+    };
+    var nanobar = new Nanobar(options);
+    nanobar.go(30);
+    nanobar.go(76);
+    nanobar.go(100);
+  </script>
+
+</body>
+
+</html>
