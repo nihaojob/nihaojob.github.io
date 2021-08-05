@@ -123,7 +123,7 @@ script:
 
 
 ### ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/0b50e6c759484b6295df557e4d720bd3~tplv-k3u1fbpfcp-zoom-1.image)
-点击EMBED按钮获得带分辨率的徽章，拷贝到自己的项目ReadMe文件里就可以了。
+点击EMBED按钮获得带覆盖率的徽章，拷贝到自己的项目ReadMe文件里就可以了。
 ![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/92185563e95844558bb817d248497a25~tplv-k3u1fbpfcp-zoom-1.image)
 ## 结尾
 
