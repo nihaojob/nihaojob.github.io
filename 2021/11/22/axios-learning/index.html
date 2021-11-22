@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <!-- Minima -->
+  <!-- Hexo theme created by @adisaktijrs -->
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+
+  
+  <title>Axios源码学习</title>
+  
+  <link rel="canonical" href="https://nihaojob.github.io/2021/11/22/axios-learning/">
+  
+  <meta name="description" content="目录 介绍 初始化：axios 、Axios、intance 整体流程：request =&amp;gt; deispatchRequest =&amp;gt; Adapter 数据转换：despatchRequest 适配器：Adapter 拦截器：request =&amp;gt; deispatchRequest =">
+  
+  
+  <meta name="author" content="nihaojob@163.com">
+  
+  <meta property="og:image" content="https://nihaojob.github.ioundefined">
+  
+  <meta property="og:site_name" content="秦少卫的博客" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Axios源码学习" />
+  
+  <meta property="og:description" content="目录 介绍 初始化：axios 、Axios、intance 整体流程：request =&amp;gt; deispatchRequest =&amp;gt; Adapter 数据转换：despatchRequest 适配器：Adapter 拦截器：request =&amp;gt; deispatchRequest =">
+  
+  <meta property="og:url" content="https://nihaojob.github.io/2021/11/22/axios-learning/" />
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Axios源码学习">
+  
+  <meta name="twitter:description" content="目录 介绍 初始化：axios 、Axios、intance 整体流程：request =&amp;gt; deispatchRequest =&amp;gt; Adapter 数据转换：despatchRequest 适配器：Adapter 拦截器：request =&amp;gt; deispatchRequest =">
+  
+  
+  <meta name="twitter:image" content="https://nihaojob.github.ioundefined">
+  
+  <meta name="twitter:url" content="https://nihaojob.github.io/2021/11/22/axios-learning/" />
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Preload fonts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="preload" href="../fonts/dm-serif-display-v4-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/inter-v2-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+<link rel="stylesheet" href="/css/normalize.css">
+
+  
+<link rel="stylesheet" href="/css/skeleton.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+<link rel="stylesheet" href="/css/prism-dark.css">
+
+  
+<link rel="stylesheet" href="/css/prism-line-numbers.css">
+
+  <!-- User css -->
+  
+  
+<link rel="stylesheet" href="/css/user.css">
+
+  
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+  <!-- Custom Theme Color Style
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <style>
+  a:not(.icon) {
+    text-decoration-color: #0FA0CE;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 50%,
+      #0FA0CE 50%
+    );
+  }
+  blockquote {
+    border-left: 8px solid #0FA0CE;
+  }
+  .nanobar .bar {
+    background: #0FA0CE;
+  }
+  .button.button-primary:hover,
+  button.button-primary:hover,
+  input[type="submit"].button-primary:hover,
+  input[type="reset"].button-primary:hover,
+  input[type="button"].button-primary:hover,
+  .button.button-primary:focus,
+  button.button-primary:focus,
+  input[type="submit"].button-primary:focus,
+  input[type="reset"].button-primary:focus,
+  input[type="button"].button-primary:focus {
+    background-color: #0FA0CE;
+    border-color: #0FA0CE;
+  }
+  input[type="email"]:focus,
+  input[type="number"]:focus,
+  input[type="search"]:focus,
+  input[type="text"]:focus,
+  input[type="tel"]:focus,
+  input[type="url"]:focus,
+  input[type="password"]:focus,
+  textarea:focus,
+  select:focus {
+    border: 1px solid #0FA0CE;
+  }
+</style>
+
+  <!-- Google Analytics (With Privacy Settings On)
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="秦少卫的博客" type="application/atom+xml">
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div>
+
+        <div class="row">
+  <div class="two columns" style="max-width: 50px">
+    <h1 class="mt-2 mode">
+      <div onclick=setDarkMode(true) id="darkBtn">🌑</div>
+      <div onclick=setDarkMode(false) id="lightBtn" class=hidden>☀️</div>
+      <script >
+        if (localStorage.getItem('preferredTheme') == 'dark') {
+          setDarkMode(true)
+        }
+        function setDarkMode(isDark) {
+          var darkBtn = document.getElementById('darkBtn')
+          var lightBtn = document.getElementById('lightBtn')
+          if (isDark) {
+            lightBtn.style.display = "block"
+            darkBtn.style.display = "none"
+            localStorage.setItem('preferredTheme', 'dark');
+          } else {
+            lightBtn.style.display = "none"
+            darkBtn.style.display = "block"
+            localStorage.removeItem('preferredTheme');
+          }
+          document.body.classList.toggle("darkmode");
+        }
+      </script>
+    </h1>
+  </div>
+
+  <div class="six columns ml-1">
+    <h1 class="mt-2">
+      秦少卫的博客
+    </h1>
+  </div>
+
+  <div class="twelve columns">
+    <div class="row">
+      <div class="nine columns left">
+        <a href="/">主页</a>
+        
+          
+          <a href="/archives" class="ml">归档</a>
+          
+        
+          
+          <a href="/About" class="ml">关于</a>
+          
+        
+          
+          <a href="/atom.xml" class="ml">RSS</a>
+          
+        
+          
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/3843548383549214" class="ml">掘金</a>
+          
+        
+        
+      </div>
+    </div>
+    <hr style="margin-bottom: 2.6rem">
+  </div>
+</div>
+
+        <div class="trans">
+            <h2>Axios源码学习</h2>
+
+  <h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ol>
+<li>介绍</li>
+<li><strong>初始化</strong>：axios 、Axios、intance</li>
+<li><strong>整体流程</strong>：request =&gt; deispatchRequest =&gt; Adapter</li>
+<li>数据转换：despatchRequest</li>
+<li>适配器：Adapter</li>
+<li><strong>拦截器</strong>：request =&gt; deispatchRequest =&gt; response </li>
+<li><strong>取消请求</strong>：cancelToken =&gt; adapter =&gt; cancel</li>
+<li>回顾</li>
+</ol>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>特点：</p>
+<ol>
+<li>支持浏览器与Node.js</li>
+<li>API promise</li>
+<li>请求/响应拦截器</li>
+<li>请求/响应格式化方法</li>
+<li>取消请求</li>
+</ol>
+<p>用法：</p>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token comment">// 直接发送请求</span>
+<span class="token function">axios</span><span class="token punctuation">(</span>config<span class="token punctuation">)</span>
+<span class="token function">axios</span><span class="token punctuation">(</span>url<span class="token punctuation">[</span><span class="token punctuation">,</span> config<span class="token punctuation">]</span><span class="token punctuation">)</span>
+axios<span class="token punctuation">.</span><span class="token function">request</span><span class="token punctuation">(</span>config<span class="token punctuation">)</span>
+
+<span class="token comment">// 别名方法</span>
+axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>url<span class="token punctuation">[</span><span class="token punctuation">,</span> config<span class="token punctuation">]</span><span class="token punctuation">)</span>
+axios<span class="token punctuation">.</span><span class="token function">delete</span><span class="token punctuation">(</span>url<span class="token punctuation">[</span><span class="token punctuation">,</span> config<span class="token punctuation">]</span><span class="token punctuation">)</span>
+axios<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span>url<span class="token punctuation">[</span><span class="token punctuation">,</span> data<span class="token punctuation">,</span> config<span class="token punctuation">]</span><span class="token punctuation">)</span>
+axios<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span>url<span class="token punctuation">[</span><span class="token punctuation">,</span> data<span class="token punctuation">,</span> config<span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+axios<span class="token punctuation">.</span>defaults<span class="token punctuation">.</span>xxx<span class="token operator">:</span> 请求的默认全局配置 
+axios<span class="token punctuation">.</span>interceptors<span class="token punctuation">.</span>request<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> 添加请求拦截器 
+axios<span class="token punctuation">.</span>interceptors<span class="token punctuation">.</span>response<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> 添加响应拦截器
+
+axios<span class="token punctuation">.</span><span class="token function">create</span><span class="token punctuation">(</span><span class="token punctuation">[</span>config<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token operator">:</span> 创建一个新的 axios
+
+<span class="token comment">// 只有默认axios有的方法，新创建的没有</span>
+axios<span class="token punctuation">.</span><span class="token function">Cancel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> 用于创建取消请求的错误对象 
+axios<span class="token punctuation">.</span><span class="token function">CancelToken</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> 用于创建取消请求的 token 对象 
+axios<span class="token punctuation">.</span><span class="token function">isCancel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> 是否是一个取消请求的错误 
+axios<span class="token punctuation">.</span><span class="token function">all</span><span class="token punctuation">(</span>promises<span class="token punctuation">)</span><span class="token operator">:</span> 用于批量执行多个异步请求 
+axios<span class="token punctuation">.</span><span class="token function">spread</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">:</span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>​</p>
+<p>目录结构</p>
+<pre class="line-numbers language-none"><code class="language-none">├── adapters
+│   ├── README.md
+│   ├── http.js   &#x2F;&#x2F; Node环境请求
+│   └── xhr.js    &#x2F;&#x2F; 浏览器环境请求
+├── axios.js      &#x2F;&#x2F; 入口文件 初始化
+├── cancel        &#x2F;&#x2F; 请求取消模块
+│   ├── Cancel.js  
+│   ├── CancelToken.js
+│   └── isCancel.js
+├── core          &#x2F;&#x2F; 核心模块
+│   ├── Axios.js  &#x2F;&#x2F; 初始化
+│   ├── InterceptorManager.js   &#x2F;&#x2F; 拦截器管理
+│   ├── buildFullPath.js
+│   ├── createError.js
+│   ├── dispatchRequest.js       &#x2F;&#x2F; 请求调用
+│   ├── enhanceError.js
+│   ├── mergeConfig.js
+│   ├── settle.js
+│   └── transformData.js         &#x2F;&#x2F; 数据转换
+├── defaults.js                  &#x2F;&#x2F; 默认配置
+├── env
+│   ├── README.md
+│   └── data.js
+├── helpers
+│   ├── README.md
+│   ├── bind.js                  &#x2F;&#x2F; bind
+│   ├── buildURL.js
+│   ├── combineURLs.js
+│   ├── cookies.js
+│   ├── deprecatedMethod.js
+│   ├── isAbsoluteURL.js
+│   ├── isAxiosError.js
+│   ├── isURLSameOrigin.js
+│   ├── normalizeHeaderName.js
+│   ├── parseHeaders.js
+│   ├── spread.js
+│   └── validator.js
+└── utils.js          &#x2F;&#x2F; 类型判断、对象方法（forEach、merge、extend）<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>​</p>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p><strong>带着这个问题开始  axios与Axios的关系？</strong><br>入口文件lib/axios.js，通过 <strong>工厂函数 createInstance 初始化</strong>，得到axios，并给axios挂载Cancel、CancelToken等方法。<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5581a72d43d7414e81f610a0d1d2eefd~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<p>​</p>
+<p>初始化的流程开始从工厂函数 createInstance开始：</p>
+<ol>
+<li>Axios构造函数生成对象带有defaults属性和拦截器属性的对象</li>
+<li><strong>bind(request, content) 返回一个闭包的request方法。</strong></li>
+<li>拷贝Axios.prototype(get/post/request) </li>
+<li>拷贝context上的 defaults 和 拦截器属性。</li>
+</ol>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dc7acb10099b4fb393e04b7029c44590~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br>​</p>
+<h4 id="逐行分析-debugger："><a href="#逐行分析-debugger：" class="headerlink" title="逐行分析 + debugger："></a>逐行分析 + debugger：</h4><ol>
+<li><p>Axios构造函数生成对象带有defaults属性和拦截器属性的对象</p>
+</li>
+<li><p><strong>bind(request, content) 返回一个闭包的request方法。</strong></p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">var context <span class="token operator">=</span> new Axios<span class="token punctuation">(</span>defaultConfig<span class="token punctuation">)</span><span class="token punctuation">;</span>
+var instance <span class="token operator">=</span> bind<span class="token punctuation">(</span>Axios<span class="token punctuation">.</span>prototype<span class="token punctuation">.</span>request<span class="token punctuation">,</span> context<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e2495b480e814127a072d36cad79f7f9~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+</li>
+<li><p>拷贝Axios.prototype(get/post/request) </p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">utils<span class="token punctuation">.</span>extend<span class="token punctuation">(</span>instance<span class="token punctuation">,</span> Axios<span class="token punctuation">.</span>prototype<span class="token punctuation">,</span> context<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/68ff11904a3545f680057f002f236dbc~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+</li>
+</ol>
+<p><strong>​</strong></p>
+<ol start="4">
+<li>拷贝context上的 defaults 和 拦截器属性。</li>
+</ol>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/40450fe97003425d8ea621ef1b028f36~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<p>Axios构造函数：<br>delete、get等方法都是request的别名，只不过是合并了一下不同的配置config配置。<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7f3c1979227540d5a3eec61e5973a448~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<h3 id="axios-与-Axios-的关系"><a href="#axios-与-Axios-的关系" class="headerlink" title="axios 与 Axios 的关系"></a>axios 与 Axios 的关系</h3><ol>
+<li>语法上：axios 不是Axios的对象实例</li>
+<li>功能上：axios 具备 Axios实例上的所有功能（方法：Axios.porotype、属性：defaults/interceptors）</li>
+<li><strong>axios 是 Axios.porotype.request 函数 bind返回的 warp 函数，可直接使用</strong>。</li>
+</ol>
+<h3 id="axios-created-创建的对象-与-axios-的区别"><a href="#axios-created-创建的对象-与-axios-的区别" class="headerlink" title="axios.created 创建的对象 与 axios 的区别"></a>axios.created 创建的对象 与 axios 的区别</h3><p>相同：直接发送请求、具有request、get/post方法，具有defaults/interceptors属性。<br>不同：<strong>新的instance 不具有 Cancel、CancelToken方法</strong>。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/39b51e1e7168475489a9bb95a39704c2~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<p>15</p>
+<h2 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h2><h4 id="责任链模式"><a href="#责任链模式" class="headerlink" title="责任链模式"></a>责任链模式</h4><blockquote>
+<p>行为模式负责对象间的高效沟通和职责委派。<br>​</p>
+</blockquote>
+<blockquote>
+<p><strong>责任链模式</strong>是一种行为设计模式， 允许你将请求沿着处理者链进行发送。 收到请求后， 每个处理者均可对请求进行处理， 或将其传递给链上的下个处理者。</p>
+</blockquote>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b8ee45588c6b491582ea5797ea6cbded~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<p>模块流程：<br>Axios.porotype.request(config) ==&gt; despatchRequest(config) ==&gt; adapter(config)<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/67e90f6988b0482aa0420da37c1dcbc7~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br>​</p>
+<p>重要模块与职责：</p>
+<ol>
+<li>request： 请求拦截 =&gt; despatchRequest =&gt; 响应拦截，通过promise串联</li>
+<li>despatchRequest： 请求数据转换 =&gt; adapter =&gt; 响应数据转换</li>
+<li>adpter：根据环境确定请求函数 返回promise</li>
+</ol>
+<p>整体流程：<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/26fa4c002c574c2f9ac5c01a3f863fc9~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br>​</p>
+<p>​</p>
+<h2 id="转换数据-despatchRequest"><a href="#转换数据-despatchRequest" class="headerlink" title="转换数据 despatchRequest"></a>转换数据 despatchRequest</h2><p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a1dd24ddd71f457bba35d66eaf5fecc4~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br>​</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/72611ca0631f451793d33098428ecc5a~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4e27b0982b364db2a85eaeae357803df~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br>​</p>
+<p>默认转换<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b437dff8f77b46d389c86b269d1d8dc8~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br>​</p>
+<h2 id="适配器"><a href="#适配器" class="headerlink" title="适配器"></a>适配器</h2><blockquote>
+<p>结构型模式介绍如何将对象和类组装成较大的结构， 并同时保持结构的灵活和高效。<br><strong>适配器模式</strong>是一种结构型设计模式， 它能使接口不兼容的对象能够相互合作。</p>
+</blockquote>
+<p>​</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c813ac1d1a7d4eb9b72878578e44d35c~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/54c23a0e88354f75a9509076d4d76d65~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4971605580de4afeb2b6d2b621f65d52~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<h2 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h2><p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2d9db3c6abbd4a5fb5fead75e827274b~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<h3 id="拦截器管理"><a href="#拦截器管理" class="headerlink" title="拦截器管理"></a>拦截器管理</h3><p><strong>取消拦截器？</strong><br><strong>拦截器执行顺序？</strong><br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8640e451543f4c2bbb9996d5b7941337~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<p>lib/core/InterceptorManager.js</p>
+<ul>
+<li>user：添加</li>
+<li>eject：删除</li>
+<li>forEach：获取所有</li>
+</ul>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/be60083f6201418a9bbab9799a10f2c6~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<p>添加/取消拦截器<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/dc8f2b5341fa4181bcf2fe4562b3a050~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br>​</p>
+<p>​</p>
+<p>lib/core/Axios.js  <strong>Axios.prototype.request</strong><br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e5f23db8338b4b30b9f44bc277cb932a~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<h3 id="异步执行"><a href="#异步执行" class="headerlink" title="异步执行"></a>异步执行</h3><p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3a20a2a95ec7420594b541697fc221c8~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a0af9955c127419382709d939fbaa3a3~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<h3 id="同步执行"><a href="#同步执行" class="headerlink" title="同步执行"></a>同步执行</h3><p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/91170dc400e8457a92b59059e3ad427b~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f6fd3b0fbb12461c9cb795d5201da31e~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<h3 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h3><p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/17cf0596de65468f92771dcf1e20f358~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fa67dec98fa4487c8dffbc41224947b6~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<p>写一个demo</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">const config <span class="token operator">=</span> &#123;a:<span class="token string">'111'</span>&#125;
+const promise <span class="token operator">=</span> Promise<span class="token punctuation">.</span>resolve<span class="token punctuation">(</span>config<span class="token punctuation">)</span><span class="token punctuation">;</span>
+const arr <span class="token operator">=</span> <span class="token punctuation">[</span>promise<span class="token punctuation">]</span>
+let resault <span class="token operator">=</span> promise
+
+arr<span class="token punctuation">.</span>push<span class="token punctuation">(</span><span class="token punctuation">(</span>config<span class="token punctuation">)</span> <span class="token operator">=</span><span class="token operator">></span> &#123;
+    config<span class="token punctuation">[</span><span class="token string">'user1'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">111</span>
+    console<span class="token punctuation">.</span>log<span class="token punctuation">(</span>config<span class="token punctuation">,</span> <span class="token string">'111'</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> config
+&#125;<span class="token punctuation">)</span>
+
+arr<span class="token punctuation">.</span>push<span class="token punctuation">(</span><span class="token punctuation">(</span>config<span class="token punctuation">)</span> <span class="token operator">=</span><span class="token operator">></span> &#123;
+    config<span class="token punctuation">[</span><span class="token string">'user2'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">2222</span>
+    console<span class="token punctuation">.</span>log<span class="token punctuation">(</span>config<span class="token punctuation">,</span> <span class="token string">'222'</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> config
+&#125;<span class="token punctuation">)</span>
+
+arr<span class="token punctuation">.</span>push<span class="token punctuation">(</span><span class="token punctuation">(</span>config<span class="token punctuation">)</span> <span class="token operator">=</span><span class="token operator">></span> &#123;
+    config<span class="token punctuation">[</span><span class="token string">'user3'</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">3333</span>
+    console<span class="token punctuation">.</span>log<span class="token punctuation">(</span>config<span class="token punctuation">,</span> <span class="token string">'333'</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> config
+&#125;<span class="token punctuation">)</span>
+
+<span class="token keyword">while</span> <span class="token punctuation">(</span>arr<span class="token punctuation">.</span>length<span class="token punctuation">)</span> &#123;
+    resault <span class="token operator">=</span> promise<span class="token punctuation">.</span><span class="token keyword">then</span><span class="token punctuation">(</span>arr<span class="token punctuation">.</span>shift<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b144847eb274400db84221d14eaf7b33~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<h2 id="取消请求"><a href="#取消请求" class="headerlink" title="取消请求"></a>取消请求</h2><p>取消的使用</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ad71e5f80547421e903d51940cf40fca~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br>​</p>
+<p>lib/cancel/CancelToken.js  <strong>主函数与subscribe</strong><br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f25715bcb1164575968fbef8254cd823~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<p>订阅函数<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e6488499b46a4d349e22bcc0f989c53e~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br>​</p>
+<p>第一步 生成<br>cancelToken = new axios.CancelToken(c =&gt; cancel = c)<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ef146c5b72494f74a480023072784b24~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br>​</p>
+<p>第二步<br>xhr内  cancelToken.subscribe 存储取消事件<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ab8d364d94cc4892ada8e1f35834cd80~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/819ff9b682e94878b9861fabbbd83f9e~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br>​</p>
+<p>第三步<br>执行通过subscribe存储的取消事件<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8e005fcbb3f14898b9c90b49f57531ed~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/66fd77ef63aa4f50bdb906b9f00dd57c~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br>​</p>
+<p>观察者模式</p>
+<blockquote>
+<p><strong>观察者模式</strong>是一种行为设计模式， 允许你定义一种订阅机制， 可在对象事件发生时通知多个 “观察” 该对象的其他对象。</p>
+</blockquote>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c79aa6c1f6c1447eaf1535b60ba197b9~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"><br>​</p>
+<p>​</p>
+<p><strong>观察者模式与发布订阅的关系 讨论？</strong><br>观察者模式包含发布订阅。<br>发布订阅是观察者的升级变种。<br>观察者模式与发布订阅的区别是否有事件调度中心。<br><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d6cf25846770474aa0719cdc02078688~tplv-k3u1fbpfcp-zoom-1.image" alt="image.png"></p>
+<h2 id="回顾"><a href="#回顾" class="headerlink" title="回顾"></a>回顾</h2><ol>
+<li>axios 、Axios 的区别、初始化流程</li>
+<li>config责任链，关键模块 request、despatchRequest、adpter 的职责, 请求整体流程。</li>
+<li>despatchRequest的default转换 自动转json</li>
+<li>适配器实现</li>
+<li>request 拦截器实现，取消拦截器、执行顺序。</li>
+<li>取消请求的实现</li>
+</ol>
+<p>​</p>
+<p>感悟：</p>
+<ul>
+<li>模块职责清晰</li>
+<li>适配器易扩展</li>
+<li>拦截器、格式转换灵活</li>
+<li>设计模式的分类：创建型、结构型、行为型</li>
+<li>技巧与方法 &amp;&amp; 持续学习</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://refactoringguru.cn/design-patterns/catalog">
+</a></p>
+
+  <p> — 2021年11月22日</p>
+  
+
+
+          <div class="row mt-2">
+  
+    <div class="eight columns">
+      <p id="madewith" style="color: #c7c7c7;">静水流深，闻喧享静。空山鸣响，见惯司空。
+        
+    </div>
+
+    <!-- Sepcial thanks to https://simpleicons.org/ for the icons -->
+    <div class="four columns mb-3 posisi" >
+      
+      <a class="ml-0 footer-link icon" href="https://github.com/nihaojob" target="_blank" style="text-decoration: none" rel="noreferrer" aria-label="GitHub">
+        <svg class="github svg-hov" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      </a>
+      
+
+      
+
+      
+
+      
+
+      
+
+    </div>
+  
+</div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <script src="/js/nanobar.min.js"></script>
+  <script>
+    var options = {
+      classname: 'nanobar',
+      id: 'myNanobar'
+    };
+    var nanobar = new Nanobar(options);
+    nanobar.go(30);
+    nanobar.go(76);
+    nanobar.go(100);
+  </script>
+
+</body>
+
+</html>
