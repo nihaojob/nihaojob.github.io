@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <!-- Minima -->
+  <!-- Hexo theme created by @adisaktijrs -->
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+
+  
+  <title>如何进行稳定性治理与稳定性防范？前端视角</title>
+  
+  <link rel="canonical" href="https://nihaojob.github.io/2022/09/17/wendingxingzhili/">
+  
+  <meta name="description" content="近2年除开发日常的业务系统外，从0到1开发了实时同屏音视频讲解工具，并接手了外呼系统，2个都属于实时系统，对稳定性要求也更高，也总结一下自己对稳定治理、稳定性保证的经验。 总结分为2部分，第一部分稳定性治理，第二部分稳定性保障：  稳定性治理： 如何在项目上线初期，通过稳定性治理，将业务系统稳定性大">
+  
+  
+  <meta name="author" content="nihaojob@163.com">
+  
+  <meta property="og:image" content="https://nihaojob.github.ioundefined">
+  
+  <meta property="og:site_name" content="秦少卫的博客" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="如何进行稳定性治理与稳定性防范？前端视角" />
+  
+  <meta property="og:description" content="近2年除开发日常的业务系统外，从0到1开发了实时同屏音视频讲解工具，并接手了外呼系统，2个都属于实时系统，对稳定性要求也更高，也总结一下自己对稳定治理、稳定性保证的经验。 总结分为2部分，第一部分稳定性治理，第二部分稳定性保障：  稳定性治理： 如何在项目上线初期，通过稳定性治理，将业务系统稳定性大">
+  
+  <meta property="og:url" content="https://nihaojob.github.io/2022/09/17/wendingxingzhili/" />
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="如何进行稳定性治理与稳定性防范？前端视角">
+  
+  <meta name="twitter:description" content="近2年除开发日常的业务系统外，从0到1开发了实时同屏音视频讲解工具，并接手了外呼系统，2个都属于实时系统，对稳定性要求也更高，也总结一下自己对稳定治理、稳定性保证的经验。 总结分为2部分，第一部分稳定性治理，第二部分稳定性保障：  稳定性治理： 如何在项目上线初期，通过稳定性治理，将业务系统稳定性大">
+  
+  
+  <meta name="twitter:image" content="https://nihaojob.github.ioundefined">
+  
+  <meta name="twitter:url" content="https://nihaojob.github.io/2022/09/17/wendingxingzhili/" />
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Preload fonts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="preload" href="../fonts/dm-serif-display-v4-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/inter-v2-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+<link rel="stylesheet" href="/css/normalize.css">
+
+  
+<link rel="stylesheet" href="/css/skeleton.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+<link rel="stylesheet" href="/css/prism-dark.css">
+
+  
+<link rel="stylesheet" href="/css/prism-line-numbers.css">
+
+  <!-- User css -->
+  
+  
+<link rel="stylesheet" href="/css/user.css">
+
+  
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+  <!-- Custom Theme Color Style
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <style>
+  a:not(.icon) {
+    text-decoration-color: #0FA0CE;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 50%,
+      #0FA0CE 50%
+    );
+  }
+  blockquote {
+    border-left: 8px solid #0FA0CE;
+  }
+  .nanobar .bar {
+    background: #0FA0CE;
+  }
+  .button.button-primary:hover,
+  button.button-primary:hover,
+  input[type="submit"].button-primary:hover,
+  input[type="reset"].button-primary:hover,
+  input[type="button"].button-primary:hover,
+  .button.button-primary:focus,
+  button.button-primary:focus,
+  input[type="submit"].button-primary:focus,
+  input[type="reset"].button-primary:focus,
+  input[type="button"].button-primary:focus {
+    background-color: #0FA0CE;
+    border-color: #0FA0CE;
+  }
+  input[type="email"]:focus,
+  input[type="number"]:focus,
+  input[type="search"]:focus,
+  input[type="text"]:focus,
+  input[type="tel"]:focus,
+  input[type="url"]:focus,
+  input[type="password"]:focus,
+  textarea:focus,
+  select:focus {
+    border: 1px solid #0FA0CE;
+  }
+</style>
+
+  <!-- Google Analytics (With Privacy Settings On)
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="秦少卫的博客" type="application/atom+xml">
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div>
+
+        <div class="row">
+  <div class="two columns" style="max-width: 50px">
+    <h1 class="mt-2 mode">
+      <div onclick=setDarkMode(true) id="darkBtn">🌑</div>
+      <div onclick=setDarkMode(false) id="lightBtn" class=hidden>☀️</div>
+      <script >
+        if (localStorage.getItem('preferredTheme') == 'dark') {
+          setDarkMode(true)
+        }
+        function setDarkMode(isDark) {
+          var darkBtn = document.getElementById('darkBtn')
+          var lightBtn = document.getElementById('lightBtn')
+          if (isDark) {
+            lightBtn.style.display = "block"
+            darkBtn.style.display = "none"
+            localStorage.setItem('preferredTheme', 'dark');
+          } else {
+            lightBtn.style.display = "none"
+            darkBtn.style.display = "block"
+            localStorage.removeItem('preferredTheme');
+          }
+          document.body.classList.toggle("darkmode");
+        }
+      </script>
+    </h1>
+  </div>
+
+  <div class="six columns ml-1">
+    <h1 class="mt-2">
+      秦少卫的博客
+    </h1>
+  </div>
+
+  <div class="twelve columns">
+    <div class="row">
+      <div class="nine columns left">
+        <a href="/">主页</a>
+        
+          
+          <a href="/archives" class="ml">归档</a>
+          
+        
+          
+          <a href="/About" class="ml">关于</a>
+          
+        
+          
+          <a href="/atom.xml" class="ml">RSS</a>
+          
+        
+          
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/3843548383549214" class="ml">掘金</a>
+          
+        
+        
+      </div>
+    </div>
+    <hr style="margin-bottom: 2.6rem">
+  </div>
+</div>
+
+        <div class="trans">
+            <h2>如何进行稳定性治理与稳定性防范？前端视角</h2>
+
+  <p>近2年除开发日常的业务系统外，从0到1开发了实时同屏音视频讲解工具，并接手了外呼系统，<strong>2个都属于实时系统，对稳定性要求也更高</strong>，也总结一下自己对稳定治理、稳定性保证的经验。</p>
+<p>总结分为2部分，第一部分稳定性治理，第二部分稳定性保障：</p>
+<ol>
+<li><strong>稳定性治理：</strong> 如何在项目上线初期，通过稳定性治理，将业务系统稳定性大幅提高并大规模应用？</li>
+<li><strong>稳定性保障：</strong> 对稳定性要求较高的系统进行开发维护，有哪些技术规范与机制来保障系统稳定性？</li>
+</ol>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>自己负责开发维护的2个项目均具备实时、宿主环境复杂、业务敏感度高的特点，属于对稳定性要求较高的项目，简单解释下3个特点：</p>
+<ul>
+<li>实时：依赖websocket或第三方实时消息。</li>
+<li>宿主环境复杂：依赖摄像头、麦克风、浏览器版本，浏览器权限等。</li>
+<li>业务敏感度高：实时沟通中出现问题感知明显，如果出现故障直接关联销售额。</li>
+</ul>
+<p>在同屏项目中，从上线初期问题频发，到稳定运行并大规模使用，积累了稳定性治理的经验。<br>另外，因为同屏与外呼都具备实时、宿主环境复杂、业务敏感度高的特点，在日常的开发迭代中，掌握了如何通过研发规范与机制来保障系统稳定性。</p>
+<h2 id="稳定性治理"><a href="#稳定性治理" class="headerlink" title="稳定性治理"></a>稳定性治理</h2><p><strong>如何在项目上线初期，通过稳定性治理，将业务系统稳定性大幅提高并大规模应用？</strong></p>
+<p>我们的项目涉及云手机、webRTC厂商、实时消息厂商、实时消息服务等，页面区分B端与C端，又依赖摄像头/麦克风、浏览器权限、美颜软件等，链路长且宿主环境复杂，出现问题时定位也就更难。</p>
+<p>项目上线初期，研发被拉进各个业务群内进行问题排查与解答，每天忙的焦头烂额，问题也五花八门，没办法分辨出真正的稳定性问题，也没精力解决真正的去解决稳定性问题，导致稳定性问题得不到进展。</p>
+<p>我们后续梳理了稳定性治理方案，约定好问题上报流程，定期进行稳定性会议专项沟通，取得了明显的进展，将稳定性问题逐步解决，并大规模应用起来了。</p>
+<h3 id="1-统一问题上报流程与稳定性指标"><a href="#1-统一问题上报流程与稳定性指标" class="headerlink" title="1. 统一问题上报流程与稳定性指标"></a>1. 统一问题上报流程与稳定性指标</h3><p>在实际业务中，用户遇到问题时，期望尽快得到解决，会通过飞书、微信等各种业务群进行询问。</p>
+<p>有时候一个问题会在不同的群出现，有的问题没有详细的描述，只有一句话或1个截图，没办法根据极少的信息进行定位与排查；哪怕有详细数据，提供方案后是否有效，是否能解决也得不到反馈。</p>
+<p>问题散落在个个群内，进行数据汇总的成本很高，也没办法根据数据及时找到共性规律，<strong>群并不是高效解决稳定性问题的最优渠道，建立统一的上报流程就显得尤为重要</strong>。</p>
+<p><strong>目的：</strong><br>收集真实、客观的、可观测数据，建立有效的稳定性指标并进行治理。</p>
+<p><strong>怎么做：</strong></p>
+<ol>
+<li>业务、研发达成一致，统一上报流程，所有问题都要统计，避免重复上报。</li>
+<li>有效统计：所有上报要有详细信息，包括但不限于用户信息、操作描述、截图、录屏视频等。</li>
+<li>尽可自动化统计：自动截图、将相关数据汇总，如一键提交工单功能。</li>
+<li>确立稳定性指标：将反馈次数多的问题数量确立为稳定性指标。</li>
+<li>便捷查看：通过看板、数据周报形式，能够便捷观测数据的变化。</li>
+</ol>
+<h3 id="2-建立FAQ手册"><a href="#2-建立FAQ手册" class="headerlink" title="2. 建立FAQ手册"></a>2. 建立FAQ手册</h3><p>并非所有问题都应该由技术去解决，可以通过培训、学习视频课程、宣导等<strong>SOP标准化流程来解决高频问题</strong>。</p>
+<p>譬如“为什么提示我没权限？”、“客户没网怎么办？”、“如何打开美颜？”等诸如此类的问题；<br>也可以将我们无法解决的问题包含在内，譬如客户手机不支持音视频通话时，可以引导客户使用家人的手机或使用电脑；亦或是一些异常突发情况的安慰话术，如“网络或者电脑问题需要应由IT人员协助解决”等。</p>
+<p><strong>目的：</strong> 用适合的方式高效的解决业务问题，避免非技术问题透传给研发人员。</p>
+<p><strong>怎么做：</strong></p>
+<ol>
+<li>建立FAQ手册：筛选可通过SOP标准化流程解决高频问题，并给出答案。</li>
+<li>对使用人员进行培训、宣导。</li>
+<li>强调问题上报前需根据FAQ提供的方案尝试自行解决。</li>
+<li>验证FAQ是否有效，观测上报问题数量是否有减少，是否需要迭代。</li>
+</ol>
+<h3 id="3-建立需求池"><a href="#3-建立需求池" class="headerlink" title="3. 建立需求池"></a>3. 建立需求池</h3><p>业务需求不会因为稳定性问题而停止，一定要建立需求池列表，<strong>将稳定性问题列入需求池排期中，让研发投入精力去排查与定位</strong>，并最终解决。</p>
+<p><strong>目的：</strong> 遵循客观规律，技术问题需要研发人员投入精力才能解决。</p>
+<p><strong>怎么做：</strong></p>
+<ol>
+<li>汇总需求列表与稳定性问题列表，并进行粗略的时间评估。</li>
+<li>与产品、业务人员确定优先级，并确立排期。</li>
+<li>按排期进行稳定性问题跟进。</li>
+</ol>
+<h3 id="4-稳定性专项会议"><a href="#4-稳定性专项会议" class="headerlink" title="4. 稳定性专项会议"></a>4. 稳定性专项会议</h3><p>稳定性治理初期业务人员与研发人员要密切沟通，根据问题数据、迭代流程、FAQ、需求优先级等进行确认，<strong>研发与业务必须达成一致，防止信息不同步</strong>，会议可以简短但不能没有。</p>
+<p>后期稳定性治理取得较大进展后，可放缓会议频率或逐步取消。</p>
+<p><strong>目的：</strong> 小步快跑的迭代稳定性治理方案。</p>
+<p><strong>怎么做：</strong></p>
+<ol>
+<li>确定稳定性会议人员、会议频率、发起人等。</li>
+<li>确定会议内容：根据上报数据、需求进展、稳定性指标，判断是否调整优先级、FAQ、上报流程等。</li>
+<li>按约定执行会议。</li>
+</ol>
+<hr>
+<h2 id="稳定性保障"><a href="#稳定性保障" class="headerlink" title="稳定性保障"></a>稳定性保障</h2><p><strong>对稳定性要求较高的的系统进行开发维护，有哪些技术规范与机制来保障系统稳定性？</strong></p>
+<h3 id="技术方案："><a href="#技术方案：" class="headerlink" title="技术方案："></a>技术方案：</h3><ol>
+<li>灰度策略：新需求或改动要评估影响范围，并给出新功能灰度策略，尽量避免核心功能全量发布。</li>
+<li>回测标准：根据影响范围与核心流程，梳理出回测Case，回测必须覆盖核心流程。</li>
+<li>系统日志：对核心流程增加日志记录，保证问题可回溯，有数据可查。</li>
+<li>埋点：针对正常点与异常点增加埋点统计，可根据埋点评估业务使用状况。</li>
+<li>补偿与兜底：涉及核心流程时，要对核心增加补偿机制、兜底策略，在核心流程执行失败时可重试或走兜底策略。</li>
+<li>多活机制：避免核心服务的单点依赖，如外呼的CTI厂商接入多家、RTC厂商接入多家，在依赖服务发生故障时可紧急切换，保障系统正常运行。</li>
+<li>上线计划：要避开使用高峰期上线，根据每日的使用量判断，建议在使用量末端时上线， 该事件段内有小部分流量可验证系统功能是否正常，不会导致因为回测场景不足导致的高分期故障。</li>
+</ol>
+<h3 id="值班机制："><a href="#值班机制：" class="headerlink" title="值班机制："></a>值班机制：</h3><ol>
+<li>报错值班：前后端服务统一接入报错监控，代码异常错误时及时通知到研发人员，轮值进行报错跟踪。</li>
+<li>报警值班：指业务指标数据的报警，如登录次数、浏览量、支付量等，可环比上周或上一天数据进行监控；如果系统发生故障，关键的业务指标是非常敏感且准确的。</li>
+<li>上线值班：新功能上线前指定值班人员，提高警觉，出现问题第一时间有人响应，避免问题扩大。</li>
+<li>指标巡检：有些问题可能需要经过较长的潜伏期才能暴露，要定期多业务指标进行巡检，对比上周、上月是否有明显差异。</li>
+</ol>
+<h3 id="故障-Bug复盘："><a href="#故障-Bug复盘：" class="headerlink" title="故障/Bug复盘："></a>故障/Bug复盘：</h3><p>当稳定性问题解决后，要及时进行归因复盘，讨论如何避免同类问题的再次发生，围绕在事前积极预防，事中快速处理 ，事后总结提高，并拆解出可落地具体事项。</p>
+<p>例如：</p>
+<ol>
+<li>技术方案checklist是否需要补充。</li>
+<li>监控报警是否全面。</li>
+<li>增加单元测试是否可避免。</li>
+<li>值班机制是否要需要调整。</li>
+<li>关键指标巡检是否需要增加。</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>借用一句名言：</p>
+<blockquote>
+<p>过程比结果更重要，过程可追求，但结果只能由过程带来，只有掌握争取的过程，才能不断复制出好的结果。<br>培养人是过程，业绩是结果；团队值多少钱，就有多少业绩。</p>
+</blockquote>
+<p>近两年在项目中，这些过程经验也变成了我的宝贵财富，让自己对如何进行稳定性治理、如何进行稳定性保障有了一些经验积累，希望对你也有所帮助；以上为个人的经验总结，不当之处恳请斧正。</p>
+<p>你有没有系统稳定性相关经验，欢迎一起讨论，微信：nihaojob。</p>
+
+  <p> — 2022年9月17日</p>
+  
+
+
+          <div class="row mt-2">
+  
+    <div class="eight columns">
+      <p id="madewith" style="color: #c7c7c7;">静水流深，闻喧享静。空山鸣响，见惯司空。
+        
+    </div>
+
+    <!-- Sepcial thanks to https://simpleicons.org/ for the icons -->
+    <div class="four columns mb-3 posisi" >
+      
+      <a class="ml-0 footer-link icon" href="https://github.com/nihaojob" target="_blank" style="text-decoration: none" rel="noreferrer" aria-label="GitHub">
+        <svg class="github svg-hov" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      </a>
+      
+
+      
+
+      
+
+      
+
+      
+
+    </div>
+  
+</div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <script src="/js/nanobar.min.js"></script>
+  <script>
+    var options = {
+      classname: 'nanobar',
+      id: 'myNanobar'
+    };
+    var nanobar = new Nanobar(options);
+    nanobar.go(30);
+    nanobar.go(76);
+    nanobar.go(100);
+  </script>
+
+</body>
+
+</html>
