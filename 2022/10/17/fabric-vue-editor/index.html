@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <!-- Minima -->
+  <!-- Hexo theme created by @adisaktijrs -->
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+
+  
+  <title>使用fabric.js 快速开发一个图片编辑器</title>
+  
+  <link rel="canonical" href="https://nihaojob.github.io/2022/10/17/fabric-vue-editor/">
+  
+  <meta name="description" content="最近自己开发了一个图片编辑器，把源码也放在了GitHub上，顺便也总结下使用fabric.js开发一个编辑器需要用到哪些知识点。  预览地址：https://nihaojob.github.io/vue-fabric-editor/ GitHub地址：https://github.com/nihao">
+  
+  
+  <meta name="author" content="nihaojob@163.com">
+  
+  <meta property="og:image" content="https://nihaojob.github.ioundefined">
+  
+  <meta property="og:site_name" content="秦少卫的博客" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="使用fabric.js 快速开发一个图片编辑器" />
+  
+  <meta property="og:description" content="最近自己开发了一个图片编辑器，把源码也放在了GitHub上，顺便也总结下使用fabric.js开发一个编辑器需要用到哪些知识点。  预览地址：https://nihaojob.github.io/vue-fabric-editor/ GitHub地址：https://github.com/nihao">
+  
+  <meta property="og:url" content="https://nihaojob.github.io/2022/10/17/fabric-vue-editor/" />
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="使用fabric.js 快速开发一个图片编辑器">
+  
+  <meta name="twitter:description" content="最近自己开发了一个图片编辑器，把源码也放在了GitHub上，顺便也总结下使用fabric.js开发一个编辑器需要用到哪些知识点。  预览地址：https://nihaojob.github.io/vue-fabric-editor/ GitHub地址：https://github.com/nihao">
+  
+  
+  <meta name="twitter:image" content="https://nihaojob.github.ioundefined">
+  
+  <meta name="twitter:url" content="https://nihaojob.github.io/2022/10/17/fabric-vue-editor/" />
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Preload fonts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="preload" href="../fonts/dm-serif-display-v4-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/inter-v2-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+<link rel="stylesheet" href="/css/normalize.css">
+
+  
+<link rel="stylesheet" href="/css/skeleton.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+<link rel="stylesheet" href="/css/prism-dark.css">
+
+  
+<link rel="stylesheet" href="/css/prism-line-numbers.css">
+
+  <!-- User css -->
+  
+  
+<link rel="stylesheet" href="/css/user.css">
+
+  
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+  <!-- Custom Theme Color Style
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <style>
+  a:not(.icon) {
+    text-decoration-color: #0FA0CE;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 50%,
+      #0FA0CE 50%
+    );
+  }
+  blockquote {
+    border-left: 8px solid #0FA0CE;
+  }
+  .nanobar .bar {
+    background: #0FA0CE;
+  }
+  .button.button-primary:hover,
+  button.button-primary:hover,
+  input[type="submit"].button-primary:hover,
+  input[type="reset"].button-primary:hover,
+  input[type="button"].button-primary:hover,
+  .button.button-primary:focus,
+  button.button-primary:focus,
+  input[type="submit"].button-primary:focus,
+  input[type="reset"].button-primary:focus,
+  input[type="button"].button-primary:focus {
+    background-color: #0FA0CE;
+    border-color: #0FA0CE;
+  }
+  input[type="email"]:focus,
+  input[type="number"]:focus,
+  input[type="search"]:focus,
+  input[type="text"]:focus,
+  input[type="tel"]:focus,
+  input[type="url"]:focus,
+  input[type="password"]:focus,
+  textarea:focus,
+  select:focus {
+    border: 1px solid #0FA0CE;
+  }
+</style>
+
+  <!-- Google Analytics (With Privacy Settings On)
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+
+<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="秦少卫的博客" type="application/atom+xml">
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div>
+
+        <div class="row">
+  <div class="two columns" style="max-width: 50px">
+    <h1 class="mt-2 mode">
+      <div onclick=setDarkMode(true) id="darkBtn">🌑</div>
+      <div onclick=setDarkMode(false) id="lightBtn" class=hidden>☀️</div>
+      <script >
+        if (localStorage.getItem('preferredTheme') == 'dark') {
+          setDarkMode(true)
+        }
+        function setDarkMode(isDark) {
+          var darkBtn = document.getElementById('darkBtn')
+          var lightBtn = document.getElementById('lightBtn')
+          if (isDark) {
+            lightBtn.style.display = "block"
+            darkBtn.style.display = "none"
+            localStorage.setItem('preferredTheme', 'dark');
+          } else {
+            lightBtn.style.display = "none"
+            darkBtn.style.display = "block"
+            localStorage.removeItem('preferredTheme');
+          }
+          document.body.classList.toggle("darkmode");
+        }
+      </script>
+    </h1>
+  </div>
+
+  <div class="six columns ml-1">
+    <h1 class="mt-2">
+      秦少卫的博客
+    </h1>
+  </div>
+
+  <div class="twelve columns">
+    <div class="row">
+      <div class="nine columns left">
+        <a href="/">主页</a>
+        
+          
+          <a href="/archives" class="ml">归档</a>
+          
+        
+          
+          <a href="/About" class="ml">关于</a>
+          
+        
+          
+          <a href="/atom.xml" class="ml">RSS</a>
+          
+        
+          
+          <a target="_blank" rel="noopener" href="https://juejin.cn/user/3843548383549214" class="ml">掘金</a>
+          
+        
+        
+      </div>
+    </div>
+    <hr style="margin-bottom: 2.6rem">
+  </div>
+</div>
+
+        <div class="trans">
+            <h2>使用fabric.js 快速开发一个图片编辑器</h2>
+
+  <p>最近自己开发了一个图片编辑器，把源码也放在了GitHub上，顺便也总结下使用fabric.js开发一个编辑器需要用到哪些知识点。</p>
+<ul>
+<li>预览地址：<a href="https://nihaojob.github.io/vue-fabric-editor/">https://nihaojob.github.io/vue-fabric-editor/</a></li>
+<li>GitHub地址：<a target="_blank" rel="noopener" href="https://github.com/nihaojob/vue-fabric-editor">https://github.com/nihaojob/vue-fabric-editor</a></li>
+</ul>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/88ca4329b4c24dcea91e624ccadf4127~tplv-k3u1fbpfcp-watermark.image" alt="Foxmail20220904011310.png"></p>
+<h3 id="架构设计"><a href="#架构设计" class="headerlink" title="架构设计"></a>架构设计</h3><p><strong>选型：</strong> fabric.js 和 konva.js都是强大的canvas库，功能上类似，konva.js比较新中文文档也多一些，因为比较熟悉fabric就没有采用konva。</p>
+<p><strong>要点：</strong> 因为框架用的vue，主要解决如何把fabric的实例对象共享给各个功能组件，区分出是未选中、单选、多选状态，然后将选中、取消选中事件暴露给各个功能组件，子组件根据状态进行独立的功能开发。</p>
+<p>我的方法是在入口文件中初始化实例，然后与mixins结合，在mixins中定义了选择类型（多选、单选、未选中）、选中元素类型、选中id等属性，以及选中、取消选中的事件，子组件通过引入mixins来开发对应功能；如子组件需要对fabric对象进行操作，则可以通过inject获得原始对象。</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/97d79b361a2549eea30d199e59b36344~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p>入口文件：<br><a target="_blank" rel="noopener" href="https://github.com/nihaojob/vue-fabric-editor/blob/161faae7b0adcf6f55d9efaa38cb6d7c6d2c01b5/src/views/HomeView.vue#L113">https://github.com/nihaojob/vue-fabric-editor/blob/161faae7b0adcf6f55d9efaa38cb6d7c6d2c01b5/src/views/HomeView.vue#L113</a></p>
+<p>mixins文件：<br><a target="_blank" rel="noopener" href="https://github.com/nihaojob/vue-fabric-editor/blob/main/src/mixins/select.js">https://github.com/nihaojob/vue-fabric-editor/blob/main/src/mixins/select.js</a></p>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>初始化比较简单，fabric.js创建对象，用EventEmitter创建事件发射器，可订阅单选、多选、取消选择事件。<br>通过vue的provide语法把fabric对象、EventEmitter对象向下传递，在mixins中保存选中的元素和选中状态。</p>
+<p><strong>初始化：</strong><br><a target="_blank" rel="noopener" href="https://github.com/nihaojob/vue-fabric-editor/blob/161faae7b0adcf6f55d9efaa38cb6d7c6d2c01b5/src/views/HomeView.vue#L111">https://github.com/nihaojob/vue-fabric-editor/blob/161faae7b0adcf6f55d9efaa38cb6d7c6d2c01b5/src/views/HomeView.vue#L111</a></p>
+<p><strong>事件发射器：</strong></p>
+<pre class="line-numbers language-none"><code class="language-none">import EventEmitter from &#39;events&#39;
+
+class EventHandle extends EventEmitter &#123;
+
+    init(handler)&#123;
+        this.handler &#x3D; handler
+        this.handler.on(&quot;selection:created&quot;, (e) &#x3D;&gt; this._selected(e));
+        this.handler.on(&quot;selection:updated&quot;,  (e) &#x3D;&gt; this._selected(e));
+        this.handler.on(&quot;selection:cleared&quot;, (e) &#x3D;&gt; this._selected(e));
+    &#125;
+
+    &#x2F;&#x2F; 暴露单选多选事件
+    _selected(e) &#123;
+        const actives &#x3D; this.handler.getActiveObjects()
+        if(actives &amp;&amp; actives.length &#x3D;&#x3D;&#x3D; 1) &#123;
+            this.emit(&#39;selectOne&#39;, actives)
+        &#125;else if(actives &amp;&amp; actives.length &gt; 1)&#123;
+            this.mSelectMode &#x3D; &#39;multiple&#39;
+            this.emit(&#39;selectMultiple&#39;, actives)
+        &#125;else&#123;
+            this.emit(&#39;selectCancel&#39;)
+        &#125;
+    &#125;
+&#125;
+
+export default EventHandle<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>mixins:</strong></p>
+<pre class="line-numbers language-none"><code class="language-none">export default &#123;
+  inject: [&#39;canvas&#39;, &#39;fabric&#39;, &#39;event&#39;],
+  data() &#123;
+    return &#123;
+      mSelectMode: &#39;&#39;, &#x2F;&#x2F; one | multiple
+      mSelectOneType: &#39;&#39;, &#x2F;&#x2F; i-text | group ...
+      mSelectId: &#39;&#39;, &#x2F;&#x2F; 选择id
+      mSelectIds: [], &#x2F;&#x2F; 选择id
+    &#125;
+  &#125;,
+  created()&#123;
+    this.event.on(&#39;selectOne&#39;, (e) &#x3D;&gt; &#123;
+      this.mSelectMode &#x3D; &#39;one&#39;
+      this.mSelectId &#x3D; e[0].id
+      this.mSelectOneType &#x3D; e[0].type
+      this.mSelectIds &#x3D; e.map(item &#x3D;&gt; item.id)
+    &#125;)
+
+    this.event.on(&#39;selectMultiple&#39;, (e) &#x3D;&gt; &#123;
+      this.mSelectMode &#x3D; &#39;multiple&#39;
+      this.mSelectId &#x3D; &#39;&#39;
+      this.mSelectIds &#x3D; e.map(item &#x3D;&gt; item.id)
+    &#125;)
+
+    this.event.on(&#39;selectCancel&#39;, () &#x3D;&gt; &#123;
+      this.mSelectId &#x3D; &#39;&#39;
+      this.mSelectIds &#x3D; []
+      this.mSelectMode &#x3D; &#39;&#39;
+      this.mSelectOneType &#x3D; &#39;&#39;
+    &#125;)
+  &#125;,
+  methods: &#123;
+    &#x2F;**
+     * @description: 保存data数据
+     * @param &#123;Object&#125; data 房间详情数据
+     *&#x2F;
+    _mixinSelected(&#123; event, selected &#125;) &#123;
+      if(selected.length &#x3D;&#x3D;&#x3D; 1) &#123;
+        const selectItem &#x3D; selected[0]
+        this.mSelectMode &#x3D; &#39;one&#39;
+        this.mSelectOneType &#x3D; selectItem.type
+        this.mSelectId &#x3D; [selectItem.id]
+        this.mSelectActive &#x3D; [selectItem]
+      &#125;else if(selected.length &gt; 1)&#123;
+        this.mSelectMode &#x3D; &#39;multiple&#39;
+        this.mSelectActive &#x3D; selected
+        this.mSelectId &#x3D; selected.map(item &#x3D;&gt; item.id)
+      &#125;else&#123;
+        this._mixinCancel()
+      &#125;
+    &#125;,
+    &#x2F;**
+     * @description: 保存data数据
+     * @param &#123;Object&#125; data 房间详情数据
+     *&#x2F;
+     _mixinCancel(data) &#123;
+      this.mSelectMode &#x3D;&#39;&#39;
+      this.mSelectId&#x3D; []
+      this.mSelectActive &#x3D;[]
+      this.mSelectOneType &#x3D; &#39;&#39;
+    &#125;,
+  &#125;
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+<h3 id="背景设置"><a href="#背景设置" class="headerlink" title="背景设置"></a>背景设置</h3><p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2286f31ad81545579f8a0a4caf060d60~tplv-k3u1fbpfcp-watermark.image" alt="背景.gif"><br>主要包括设置画布大小、设置背景颜色、设置背景图片，也可以设置背景重复方向。<br><a target="_blank" rel="noopener" href="https://github.com/nihaojob/vue-fabric-editor/blob/main/src/components/bgBar.vue">代码：</a></p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; 设置大小
+setSize() &#123;
+      this.canvas.c.setWidth(this.width);
+      this.canvas.c.setHeight(this.height);
+      this.canvas.c.renderAll()
+&#125;,
+&#x2F;&#x2F; 设置背景图片
+setBgImg(target) &#123;
+      const imgEl &#x3D; target.cloneNode(true);
+      imgEl.onload &#x3D; () &#x3D;&gt; &#123;
+        &#x2F;&#x2F; 可跨域设置
+        const imgInstance &#x3D; new this.fabric.Image(imgEl, &#123; crossOrigin: &#39;anonymous&#39; &#125;);
+        &#x2F;&#x2F; 渲染背景
+        this.canvas.c.setBackgroundImage(imgInstance, this.canvas.c.renderAll.bind(this.canvas.c), &#123;
+          scaleX: this.canvas.c.width &#x2F; imgInstance.width,
+          scaleY: this.canvas.c.width &#x2F; imgInstance.width,
+        &#125;);
+        this.canvas.c.renderAll()
+        this.canvas.c.requestRenderAll();
+      &#125;
+&#125;,
+&#x2F;&#x2F; 背景颜色设置
+setColor(color) &#123;
+      this.canvas.c.setBackgroundColor(color, this.canvas.c.renderAll.bind(this.canvas.c))
+      this.canvas.c.backgroundImage &#x3D; &#39;&#39;
+      this.canvas.c.renderAll()
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="插入元素"><a href="#插入元素" class="headerlink" title="插入元素"></a>插入元素</h3><p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/43d110915d044f91818a238df07bf767~tplv-k3u1fbpfcp-watermark.image" alt="插入元素.gif"><br>主要包括插入基础元素文字、正方形、圆形、三角形、SVG元素，详见<a target="_blank" rel="noopener" href="https://github.com/nihaojob/vue-fabric-editor/blob/main/src/components/tools.vue#L122">代码</a>：</p>
+<pre class="line-numbers language-none"><code class="language-none">addText() &#123;
+      const text &#x3D; new this.fabric.IText(&#39;万事大吉&#39;, &#123;
+        ...defaultPosition,
+        fontSize: 40, id: uuid(),
+      &#125;);
+      this.canvas.c.add(text)
+      this.canvas.c.setActiveObject(text);
+&#125;,
+addTriangle() &#123;
+      const triangle &#x3D; new this.fabric.Triangle(&#123;
+        top: 100,
+        left: 100,
+        width: 100,
+        height: 100,
+        fill: &#39;#92706B&#39;
+      &#125;)
+      this.canvas.c.add(triangle)
+      this.canvas.c.setActiveObject(triangle);
+&#125;,<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>导入SVG元素时，可以导入SVG文件或者字符串进行导入，调用fabric的loadSVGFromURL、loadSVGFromString方法进行导入，<a target="_blank" rel="noopener" href="https://github.com/nihaojob/vue-fabric-editor/blob/main/src/components/importSvg.vue">详见代码</a>。</p>
+<h3 id="属性调整"><a href="#属性调整" class="headerlink" title="属性调整"></a>属性调整</h3><p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e780a1c7c0414f0896bf80ca69b4a35c~tplv-k3u1fbpfcp-watermark.image" alt="属性调整.gif"><br>不同元素的属性会有差异，但通用属性是一致的，如填充颜色、坐标、旋转角度、透明度等，也有很多特定元素的特定属性，如文字的字体属性、图片的滤镜属性等，<a target="_blank" rel="noopener" href="https://github.com/nihaojob/vue-fabric-editor/blob/main/src/components/attribute.vue">详见代码</a>。<br>字体属性可以自定义字体，需要先下载字体后再进行设置，可以通过fontfaceobserver工具库下载指定字体，成功后在设置字体名称。</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; 字体加载
+var font &#x3D; new FontFaceObserver(fontName);
+font.load(null, 150000).then(() &#x3D;&gt; &#123;
+    const activeObject &#x3D; this.canvas.c.getActiveObjects()[0]
+    activeObject &amp;&amp; activeObject.set(&#39;fontFamily&#39;, fontName);
+    this.canvas.c.renderAll()
+    this.$Spin.hide();
+&#125;).catch((err) &#x3D;&gt; &#123;
+    this.$Spin.hide();
+&#125;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="元素对齐"><a href="#元素对齐" class="headerlink" title="元素对齐"></a>元素对齐</h3><p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9dd4ffa48d104810b895c82c705701d2~tplv-k3u1fbpfcp-watermark.image" alt="对齐.gif"><br>元素对齐区分单选元素与多选元素，单选元素时只支持相对于画布水平、垂直、水平垂直对齐。</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; name为 centerH | centerV | center
+position(name)&#123;
+  const activeObject &#x3D; this.canvas.c.getActiveObject()
+  if(activeObject)&#123;
+    activeObject[name]()
+    this.canvas.c.renderAll()
+  &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>多元素对齐有上下左右对齐、水平、垂直对齐，主要是通过获得最边缘元素的坐标，然后进行计算排序，如顶部对齐代码：</p>
+<pre class="line-numbers language-none"><code class="language-none">const activeObject &#x3D; this.canvas.c.getActiveObject();
+  if (activeObject &amp;&amp; activeObject.type &#x3D;&#x3D;&#x3D; &#39;activeSelection&#39;) &#123;
+        const activeSelection &#x3D; activeObject;
+        console.log(activeSelection)
+        const activeObjectTop &#x3D; -(activeObject.height &#x2F; 2);
+        activeSelection.forEachObject(item &#x3D;&gt; &#123;
+          item.set(&#123;
+                top: activeObjectTop,
+            &#125;);
+            item.setCoords();
+            this.canvas.c.renderAll();
+        &#125;);
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>平均分配会复杂一些，需要计算出边缘与元素间距，再进行设置，<a target="_blank" rel="noopener" href="https://github.com/nihaojob/vue-fabric-editor/blob/main/src/components/align.vue">详见代码</a>。</p>
+<h3 id="其他用法"><a href="#其他用法" class="headerlink" title="其他用法"></a>其他用法</h3><p>编辑器经常需要给元素进行分组/拆分组合、调整层级、回退、快捷键、画布放大/缩小、导入/导出文件等功能，不再一一罗列，这个小编辑器都已经支持，大家感兴趣的可以看源码。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/nihaojob/vue-fabric-editor/blob/main/src/components/group.vue">组合</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/nihaojob/vue-fabric-editor/blob/main/src/components/layer.vue">层级调整</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/nihaojob/vue-fabric-editor/blob/main/src/plugin/hotkeys.js">快捷键实现</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/nihaojob/vue-fabric-editor/blob/main/src/components/zoom.vue">画布放大缩小</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/nihaojob/vue-fabric-editor/blob/main/src/components/save.vue">导入/导出</a></li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>fabric.js的功能很强大，可以很轻松的开发出一个简版的图片编辑器，自定义素材、模板、字体文件；还可以结合数据接口拼接模板生成图片，很轻松的实现定制模板 + 生成图片的功能，比如我的朋友借助我的功能 + 成语接口生成成语图片，在小红书上斩获了八千多的粉丝。</p>
+<p>最后希望大家能够通过这个项目学习到fabric.js的基础用法，感兴趣的话可以一起维护这款小编辑器，欢迎star。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/nihaojob/vue-fabric-editor">https://github.com/nihaojob/vue-fabric-editor</a></p>
+
+  <p> — 2022年10月17日</p>
+  
+
+
+          <div class="row mt-2">
+  
+    <div class="eight columns">
+      <p id="madewith" style="color: #c7c7c7;">静水流深，闻喧享静。空山鸣响，见惯司空。
+        
+    </div>
+
+    <!-- Sepcial thanks to https://simpleicons.org/ for the icons -->
+    <div class="four columns mb-3 posisi" >
+      
+      <a class="ml-0 footer-link icon" href="https://github.com/nihaojob" target="_blank" style="text-decoration: none" rel="noreferrer" aria-label="GitHub">
+        <svg class="github svg-hov" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      </a>
+      
+
+      
+
+      
+
+      
+
+      
+
+    </div>
+  
+</div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <script src="/js/nanobar.min.js"></script>
+  <script>
+    var options = {
+      classname: 'nanobar',
+      id: 'myNanobar'
+    };
+    var nanobar = new Nanobar(options);
+    nanobar.go(30);
+    nanobar.go(76);
+    nanobar.go(100);
+  </script>
+
+</body>
+
+</html>
